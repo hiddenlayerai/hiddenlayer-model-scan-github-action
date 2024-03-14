@@ -51,7 +51,7 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
             scan_results = hl_client.model_scanner.scan_model_file(
                 model_id=file.name, model_path=file
             )
-            results[model_path] = scan_results
+            results[file] = scan_results
 
     detected = False  # Whether we detected a malicious file during the scans
 
