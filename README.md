@@ -2,7 +2,7 @@
 
 This action scans models stored in the repo or on S3. Results by default are stored in the Github Action Job Summary, with the ability to write the results to a Pull Request.
 
-![image](https://github.com/hiddenlayer-engineering/cap1-mod-scan-gh-demo/assets/154477910/0292b293-9689-4164-953b-cfad16076ea9)
+![image](https://github.com/hiddenlayerai/hiddenlayer-model-scan-github-action/assets/9558507/dbebe8db-7e68-479d-a244-070238adf00d)
 
 ## Inputs
 
