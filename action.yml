@@ -1,0 +1,19 @@
+name: 'Model Scanner'
+description: 'Scans a model for vulnerabilities using the HiddenLayer Model Scanner'
+inputs:
+  model_path:  # id of input
+    description: 'Path to the model, either a file or a folder'
+    required: true
+  api_url:
+    description: 'URL of the HiddenLayer API'
+    required: false
+    default: 'https://api.hiddenlayer.ai'
+outputs:
+  detection_results:
+    description: 'Markdown table of detection results.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.model_path }}
+    - ${{ inputs.api_url }}
