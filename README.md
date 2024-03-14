@@ -41,8 +41,8 @@ jobs:
         with:
           model_path: ./models/pytorch_model.bin
         env:
-          HL_CLIENT_ID: ${{ secrets.HL_PROD_API_ID }}
-          HL_CLIENT_SECRET: ${{ secrets.HL_PROD_API_KEY }}
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
 ```
 
 ### Scanning a model folder
@@ -60,8 +60,8 @@ jobs:
         with:
           model_path: ./models
         env:
-          HL_CLIENT_ID: ${{ secrets.HL_PROD_API_ID }}
-          HL_CLIENT_SECRET: ${{ secrets.HL_PROD_API_KEY }}
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
 ```
 
 ### Scanning a model on S3
@@ -79,8 +79,8 @@ jobs:
         with:
           model_path: s3://bucket/pytorch_model.bin
         env:
-          HL_CLIENT_ID: ${{ secrets.HL_PROD_API_ID }}
-          HL_CLIENT_SECRET: ${{ secrets.HL_PROD_API_KEY }}
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```
@@ -100,8 +100,8 @@ jobs:
         with:
           model_path: ./path_to_model_folder or s3 path
         env:
-          HL_CLIENT_ID: ${{ secrets.HL_PROD_API_ID }}
-          HL_CLIENT_SECRET: ${{ secrets.HL_PROD_API_KEY }}
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
       - name: Post Results
         id: post_results
         uses: actions/github-script@v7
