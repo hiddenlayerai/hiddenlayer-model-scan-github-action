@@ -1,16 +1,16 @@
 .PHONY: tests
 
 install:
-	uv pip install -e .
+	uv pip install -r requirements.txt
 
 install-dev:
-	uv pip install -e '.[dev]'
+	uv pip install -r requirements-dev.txt
 
 install-uv:
 	brew install uv
 
 tests:
-	pytest -sv tests/
+	.venv/bin/python -m pytest -sv tests/
 
 venv:
 	uv venv

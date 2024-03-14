@@ -35,5 +35,4 @@ jobs:
         ruff format --check .
     - name: Test with pytest
       run: |
-        # pytest
-        echo "Add tests"
+        pytest -sv tests/
