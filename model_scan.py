@@ -58,9 +58,9 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
     for path, scan_result in results.items():
         if scan_result.detections:
             detected = True
-            markdown_generator.add_table_row([str(model_path), ":x:"])
+            markdown_generator.add_table_row([str(path), ":x:"])
         else:
-            markdown_generator.add_table_row([str(model_path), ":white_check_mark:"])
+            markdown_generator.add_table_row([str(path), ":white_check_mark:"])
 
     if os.environ.get("GITHUB_OUTPUT"):
         name = "detection_results"
