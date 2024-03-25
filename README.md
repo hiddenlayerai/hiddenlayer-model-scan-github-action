@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model
         id: scan_model
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./models/pytorch_model.bin
         env:
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./models
         env:
@@ -75,7 +75,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on s3
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: s3://bucket/pytorch_model.bin
         env:
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./path_to_model_folder or s3 path
         env:
