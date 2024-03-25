@@ -35,7 +35,7 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
         file = key.split("/")[-1]
 
         scan_results = hl_client.model_scanner.scan_s3_model(
-            model_id=file, bucket=bucket, key=key
+            model_name=file, bucket=bucket, key=key
         )
 
         results[model_path] = scan_results
@@ -49,7 +49,7 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
                 continue
 
             scan_results = hl_client.model_scanner.scan_model_file(
-                model_id=file.name, model_path=file
+                model_name=file.name, model_path=file
             )
             results[file] = scan_results
 
