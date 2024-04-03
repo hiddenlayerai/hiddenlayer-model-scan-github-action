@@ -18,8 +18,6 @@ For more information about GitHub Actions:
 
 ## Inputs
 
-`id` (required): Scans a model file or scans all model files in a folder. Supported values are: `scan_model` and `scan_model_folder`.
-
 `model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo or a path on s3 to the model.
 
 `api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.hiddenlayer.ai`.
