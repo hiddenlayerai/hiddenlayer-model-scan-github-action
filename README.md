@@ -1,10 +1,24 @@
 # HiddenLayer Model Scanner Github Action
 
-This action scans models stored in the repo or on S3. Results by default are stored in the Github Action Job Summary, with the ability to write the results to a Pull Request.
+Integrate model scanning into your continuous integration (CI) process with HiddenLayer's GitHub Actions (GHA) integration. This action can scan your models that are stored in a repository or on Amazon S3.
+
+By default, the results are stored in the GitHub Actions Job Summary. You can write the results to a GitHub Pull Request (see example below).
+
+The model scan results can display the following:
+
+- Green checkmark: No issues identified in the model.
+- Red X: Issues were identified in the model. See the scan results for more information.
 
 ![image](https://github.com/hiddenlayerai/hiddenlayer-model-scan-github-action/assets/9558507/dbebe8db-7e68-479d-a244-070238adf00d)
 
+For more information about GitHub Actions:
+
+- Read the [Understanding GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) page.
+- Read the [GitHub Actions Quickstart](https://docs.github.com/en/actions/quickstart) for a quick overview.
+
 ## Inputs
+
+`id` (required): Scans a model file or scans all model files in a folder. Supported values are: `scan_model` and `scan_model_folder`.
 
 `model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo or a path on s3 to the model.
 
