@@ -100,7 +100,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Model Scanner")
     parser.add_argument("model_path", type=str)
     parser.add_argument("api_url", type=str)
-    parser.add_argument("azure_sas_key", type=str, required=False)
     args = parser.parse_args()
 
     main(args.model_path, args.api_url)
