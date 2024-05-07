@@ -1,5 +1,8 @@
 name: 'Model Scanner'
-description: 'Scans a model for vulnerabilities using the HiddenLayer Model Scanner'
+description: 'Scans models for vulnerabilities using the HiddenLayer Model Scanner'
+branding:
+  icon: lock
+  color: green
 inputs:
   model_path:  # id of input
     description: 'Path to the model, either a file or a folder'

@@ -1,8 +1,20 @@
 # HiddenLayer Model Scanner Github Action
 
-This action scans models stored in the repo or on S3. Results by default are stored in the Github Action Job Summary, with the ability to write the results to a Pull Request.
+Integrate model scanning into your continuous integration (CI) process with HiddenLayer's GitHub Actions (GHA) integration. This action can scan your models that are stored in a repository or on Amazon S3.
+
+By default, the results are stored in the GitHub Actions Job Summary. You can write the results to a GitHub Pull Request (see example below).
+
+The model scan results can display the following:
+
+- Green checkmark: No issues identified in the model.
+- Red X: Issues were identified in the model. See the scan results for more information.
 
 ![image](https://github.com/hiddenlayerai/hiddenlayer-model-scan-github-action/assets/9558507/dbebe8db-7e68-479d-a244-070238adf00d)
+
+For more information about GitHub Actions:
+
+- Read the [Understanding GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) page.
+- Read the [GitHub Actions Quickstart](https://docs.github.com/en/actions/quickstart) for a quick overview.
 
 ## Inputs
 
@@ -37,7 +49,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model
         id: scan_model
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./models/pytorch_model.bin
         env:
@@ -56,7 +68,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./models
         env:
@@ -75,7 +87,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on s3
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: s3://bucket/pytorch_model.bin
         env:
@@ -96,7 +108,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayer-engineering/cap1-hl-github-actions@main
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: ./path_to_model_folder or s3 path
         env:
