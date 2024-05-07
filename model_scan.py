@@ -7,6 +7,7 @@ from typing import Dict
 
 from hiddenlayer import HiddenlayerServiceClient
 from hiddenlayer.rest.models import ScanResultsV2
+from urllib.parse import urlparse
 
 import markdown
 
@@ -35,7 +36,22 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
         file = key.split("/")[-1]
 
         scan_results = hl_client.model_scanner.scan_s3_model(
-            model_id=file, bucket=bucket, key=key
+            model_name=file, bucket=bucket, key=key
+        )
+
+        results[model_path] = scan_results
+    elif model_path.startswith("https://") and "blob.core.windows.net" in model_path:
+        parsed_url = urlparse(model_path)
+
+        account_url = f"{parsed_url.scheme}://{parsed_url.hostname}"
+        container, blob = parsed_url.path.removeprefix("/").split("/", maxsplit=1)
+
+        scan_results = hl_client.model_scanner.scan_azure_blob_model(
+            model_name=blob,
+            account_url=account_url,
+            container=container,
+            blob=blob,
+            credential=os.getenv("AZURE_BLOB_SAS_KEY"),
         )
 
         results[model_path] = scan_results
@@ -48,8 +64,8 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
             if Path(file).is_dir():
                 continue
 
-            scan_results = hl_client.model_scanner.scan_model_file(
-                model_id=file.name, model_path=file
+            scan_results = hl_client.model_scanner.scan_file(
+                model_name=file.name, model_path=file
             )
             results[file] = scan_results
 
@@ -84,6 +100,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Model Scanner")
     parser.add_argument("model_path", type=str)
     parser.add_argument("api_url", type=str)
+    parser.add_argument("azure_sas_key", type=str, required=False)
     args = parser.parse_args()
 
     main(args.model_path, args.api_url)

@@ -17,3 +17,14 @@ def test_model_scan_s3():
         )
 
     assert e.value.code == 1
+
+
+def test_model_scan_azure():
+    """Test scanning a malicious model on azure."""
+
+    with pytest.raises(SystemExit) as e:
+        model_scan.main(
+            model_path="https://dsdemomodelsstorage.blob.core.windows.net/azureml/malicious_model.bin"
+        )
+
+    assert e.value.code == 1
