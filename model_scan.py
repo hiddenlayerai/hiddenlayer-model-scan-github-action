@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict
 
 from hiddenlayer import HiddenlayerServiceClient
-from hiddenlayer.rest.models import ScanResultsV2
+from hiddenlayer.sdk.rest.models import ScanResultsV2
 from urllib.parse import urlparse
 
 import markdown
