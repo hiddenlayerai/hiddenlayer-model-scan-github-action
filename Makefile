@@ -1,7 +1,7 @@
 .PHONY: tests
 
 install:
-	uv pip install -r requirements.txt
+	uv pip install -U -r requirements.txt
 
 install-dev:
 	uv pip install -r requirements-dev.txt

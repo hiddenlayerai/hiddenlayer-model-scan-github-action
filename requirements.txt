@@ -1,1 +1,1 @@
-hiddenlayer[aws] @ git+https://github.com/hiddenlayerai/hiddenlayer-sdk-python.git@cd8ae14
+hiddenlayer-sdk[aws,azure] @ git+https://github.com/hiddenlayerai/hiddenlayer-sdk-python.git@c3a0177

@@ -32,6 +32,8 @@ For more information about GitHub Actions:
 
 `AWS_SECRET_ACCESS_KEY`: Required when scanning a model on S3 if not using self hosted runners with access to S3.
 
+`AZURE_BLOB_SAS_KEY`: Required when scanning a model file in a Azure Blob private container.
+
 ## Output
 
 `detection_results`: A Markdown table with detection results that can be posted to PRs and Issues.
@@ -86,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Scan model on s3
-        id: scan_model_folder
+        id: scan_model_s3
         uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
         with:
           model_path: s3://bucket/pytorch_model.bin
@@ -95,6 +97,26 @@ jobs:
           HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+### Scanning a model on Azure Blob Storage
+
+```yaml
+jobs:
+  scan_model_azure_blob:
+    runs-on: ubuntu-latest
+    name: Scan a model on Azure Blob
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model on Azure Blob
+        id: scan_model_azure
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
+        with:
+          model_path: https://<storageaccountname>.blob.core.windows.net/<container>/path/to/model.bin
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+          AZURE_BLOB_SAS_KEY: ${{ secrets.SAS_KEY }}
 ```
 
 ### Post Scan Results to a PR

@@ -6,7 +6,8 @@ from pathlib import Path
 from typing import Dict
 
 from hiddenlayer import HiddenlayerServiceClient
-from hiddenlayer.rest.models import ScanResultsV2
+from hiddenlayer.sdk.rest.models import ScanResultsV2
+from urllib.parse import urlparse
 
 import markdown
 
@@ -39,6 +40,21 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
         )
 
         results[model_path] = scan_results
+    elif model_path.startswith("https://") and "blob.core.windows.net" in model_path:
+        parsed_url = urlparse(model_path)
+
+        account_url = f"{parsed_url.scheme}://{parsed_url.hostname}"
+        container, blob = parsed_url.path.removeprefix("/").split("/", maxsplit=1)
+
+        scan_results = hl_client.model_scanner.scan_azure_blob_model(
+            model_name=blob,
+            account_url=account_url,
+            container=container,
+            blob=blob,
+            credential=os.getenv("AZURE_BLOB_SAS_KEY"),
+        )
+
+        results[model_path] = scan_results
     else:
         model_path: Path = Path(model_path)
 
@@ -48,7 +64,7 @@ def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
             if Path(file).is_dir():
                 continue
 
-            scan_results = hl_client.model_scanner.scan_model_file(
+            scan_results = hl_client.model_scanner.scan_file(
                 model_name=file.name, model_path=file
             )
             results[file] = scan_results
