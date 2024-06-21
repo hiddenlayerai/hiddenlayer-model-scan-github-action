@@ -4,9 +4,7 @@ import model_scan
 
 params = [
     ("https://api.hiddenlayer.ai"),
-    pytest.param(
-        "http://localhost:8000",
-    ),  # marks=pytest.mark.xfail)
+    pytest.param("http://localhost:8000", marks=pytest.mark.xfail),
 ]
 
 
