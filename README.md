@@ -20,7 +20,7 @@ For more information about GitHub Actions:
 
 `model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo or a path on s3 to the model.
 
-`api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.hiddenlayer.ai`.
+`api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.us.hiddenlayer.ai`.
 
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
