@@ -20,13 +20,15 @@ For more information about GitHub Actions:
 
 `model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo or a path on s3 to the model.
 
-`api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.hiddenlayer.ai`.
+`api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.us.hiddenlayer.ai`.
+
+> Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
 ## Environment Variables
 
-`HL_CLIENT_ID` (required): Your HiddenLayer API Client ID.
+`HL_CLIENT_ID` (**required for SaaS only**): Your HiddenLayer API Client ID.
 
-`HL_CLIENT_SECRET` (required): Your HiddenLayer API Client Secret.
+`HL_CLIENT_SECRET` (**required for SaaS only**): Your HiddenLayer API Client Secret.
 
 `AWS_ACCESS_KEY_ID`: Required when scanning a model on S3 if not using self hosted runners with access to S3.
 
@@ -40,7 +42,7 @@ For more information about GitHub Actions:
 
 ## Example Usage
 
-### Scanning a model
+### Scanning a model using the SaaS Platform
 
 ```yaml
 jobs:
@@ -57,6 +59,23 @@ jobs:
         env:
           HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
           HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+```
+
+### Scanning a model using the Enterprise Self Hosted Model Scanner
+
+```yaml
+jobs:
+  scan_model:
+    runs-on: ubuntu-latest
+    name: Scan a model
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model
+        id: scan_model
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
+        with:
+          model_path: ./models/pytorch_model.bin
+          api_url: "https://your.enterprise.url"
 ```
 
 ### Scanning a model folder

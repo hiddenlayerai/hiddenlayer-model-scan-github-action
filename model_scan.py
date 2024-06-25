@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import markdown
 
 
-def main(model_path: str, api_url: str = "https://api.hiddenlayer.ai"):
+def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
     """
     Scans a model using the HiddenLayer API.
 

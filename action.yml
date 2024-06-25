@@ -10,7 +10,7 @@ inputs:
   api_url:
     description: 'URL of the HiddenLayer API'
     required: false
-    default: 'https://api.hiddenlayer.ai'
+    default: 'https://api.us.hiddenlayer.ai'
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
