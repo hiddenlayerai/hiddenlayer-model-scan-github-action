@@ -103,9 +103,13 @@ def main(
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
             print(markdown_generator.markdown_string.replace("\\n", "\n"), file=f)
 
+    json_output = [res.to_dict() for res in all_scan_results]
+
     if output_file:
         with open(output_file, "w") as f:
-            json.dump([res.to_dict() for res in all_scan_results], f, indent=4)
+            json.dump(json_output, f, indent=4)
+
+    print(json.dumps(json_output, indent=4))
 
     if detected and fail_on_detection:
         print("Malicious models found!")
