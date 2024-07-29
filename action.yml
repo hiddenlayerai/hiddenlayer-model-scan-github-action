@@ -19,6 +19,10 @@ inputs:
     description: Writes detection output to a json file.
     required: false
     default: null
+  sarif_file:
+    description: Writes detection output in the SARIF format to a json file.
+    required: false
+    default: null
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
@@ -30,3 +34,4 @@ runs:
     - ${{ inputs.api_url }}
     - ${{ inputs.fail_on_detection }}
     - ${{ inputs.output_file}}
+    - ${{ inputs.sarif_file}}
