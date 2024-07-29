@@ -11,6 +11,14 @@ inputs:
     description: 'URL of the HiddenLayer API'
     required: false
     default: 'https://api.us.hiddenlayer.ai'
+  fail_on_detection:
+    description: Fails pipeline if a malicious models is detected.
+    required: false
+    default: true
+  output_file:
+    description: Writes detection output to a json file.
+    required: false
+    default: null
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
@@ -20,3 +28,5 @@ runs:
   args:
     - ${{ inputs.model_path }}
     - ${{ inputs.api_url }}
+    - ${{ inputs.fail_on_detection }}
+    - ${{ inputs.output_file}}

@@ -18,9 +18,13 @@ For more information about GitHub Actions:
 
 ## Inputs
 
-`model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo or a path on s3 to the model.
+`model_path` (required): Path to the model(s), can either be a path to a single model in the repo, a folder containing the model(s) in the repo, a HuggingFace Repo or a path on s3 to the model.
 
 `api_url`: URL to the HiddenLayer API if you're using the OEM/self hosted version. Defaults to `https://api.us.hiddenlayer.ai`.
+
+`fail_on_detection`: True to fail the pipeline if a model is deemed malicious. Defaults to `True`.
+
+`output_file`: Output file to write the scan results to. Defaults to display the results in stdout.
 
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
@@ -35,6 +39,8 @@ For more information about GitHub Actions:
 `AWS_SECRET_ACCESS_KEY`: Required when scanning a model on S3 if not using self hosted runners with access to S3.
 
 `AZURE_BLOB_SAS_KEY`: Required when scanning a model file in a Azure Blob private container.
+
+`HUGGINGFACE_TOKEN`: Required if you want to scan private or licensed models.  
 
 ## Output
 
@@ -138,6 +144,25 @@ jobs:
           AZURE_BLOB_SAS_KEY: ${{ secrets.SAS_KEY }}
 ```
 
+### Scanning a HuggingFace Model
+
+```yaml
+jobs:
+  scan_huggingface_model:
+    runs-on: ubuntu-latest
+    name: Scan a HuggingFace Model
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model on Azure Blob
+        id: scan_model_huggingface
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        with:
+          model_path: hf://flair/ner-english-ontonotes
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+```
+
 ### Post Scan Results to a PR
 
 ```yaml
@@ -167,3 +192,4 @@ jobs:
               body: '${{ steps.scan_model_folder.outputs.detection_results }}'
             })
 ```
+

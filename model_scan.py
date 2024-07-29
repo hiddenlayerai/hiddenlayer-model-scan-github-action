@@ -3,16 +3,21 @@ import os
 import sys
 import uuid
 from pathlib import Path
-from typing import Dict
+from typing import Optional
+import json
 
 from hiddenlayer import HiddenlayerServiceClient
-from hiddenlayer.sdk.rest.models import ScanResultsV2
 from urllib.parse import urlparse
 
 import markdown
 
 
-def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
+def main(
+    model_path: str,
+    api_url: str = "https://api.us.hiddenlayer.ai",
+    fail_on_detection: bool = True,
+    output_file: Optional[str] = None,
+):
     """
     Scans a model using the HiddenLayer API.
 
@@ -20,6 +25,12 @@ def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
     """
     hl_api_id = os.getenv("HL_CLIENT_ID")
     hl_api_key = os.getenv("HL_CLIENT_SECRET")
+
+    # If the output file doesn't end in json or it's a dir, error early
+    if output_file and (
+        Path(output_file).is_dir() or not output_file.endswith(".json")
+    ):
+        raise ValueError("Output file must be a json file, i.e `output.json`")
 
     hl_client = HiddenlayerServiceClient(
         host=api_url, api_id=hl_api_id, api_key=hl_api_key
@@ -29,8 +40,6 @@ def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
     markdown_generator.h2("Model Scanner Results")
     markdown_generator.create_table(["File Name", "Result"])
 
-    results: Dict[str | Path, ScanResultsV2] = {}
-
     if model_path.startswith("s3://"):
         bucket, key = model_path.split("/", 2)[-1].split("/", 1)
         file = key.split("/")[-1]
@@ -39,7 +48,7 @@ def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
             model_name=file, bucket=bucket, key=key
         )
 
-        results[model_path] = scan_results
+        all_scan_results = [scan_results]
     elif model_path.startswith("https://") and "blob.core.windows.net" in model_path:
         parsed_url = urlparse(model_path)
 
@@ -54,29 +63,32 @@ def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
             credential=os.getenv("AZURE_BLOB_SAS_KEY"),
         )
 
-        results[model_path] = scan_results
+        all_scan_results = [scan_results]
+    elif model_path.startswith("hf://"):
+        all_scan_results = hl_client.model_scanner.scan_huggingface_model(
+            repo_id=model_path.removeprefix("hf://"),
+            hf_token=os.getenv("HUGGINGFACE_TOKEN"),
+        )
+    elif Path(model_path).is_dir():
+        all_scan_results = hl_client.model_scanner.scan_folder(path=Path(model_path))
     else:
         model_path: Path = Path(model_path)
-
-        files = list(model_path.rglob("*")) if model_path.is_dir() else [model_path]
-
-        for file in files:
-            if Path(file).is_dir():
-                continue
-
-            scan_results = hl_client.model_scanner.scan_file(
-                model_name=file.name, model_path=file
+        all_scan_results = [
+            hl_client.model_scanner.scan_file(
+                model_name=model_path.name, model_path=model_path
             )
-            results[file] = scan_results
+        ]
 
     detected = False  # Whether we detected a malicious file during the scans
 
-    for path, scan_result in results.items():
+    for scan_result in all_scan_results:
         if scan_result.detections:
             detected = True
-            markdown_generator.add_table_row([str(path), ":x:"])
+            markdown_generator.add_table_row([str(scan_result.file_path), ":x:"])
         else:
-            markdown_generator.add_table_row([str(path), ":white_check_mark:"])
+            markdown_generator.add_table_row(
+                [str(scan_result.file_path), ":white_check_mark:"]
+            )
 
     if os.environ.get("GITHUB_OUTPUT"):
         name = "detection_results"
@@ -91,7 +103,15 @@ def main(model_path: str, api_url: str = "https://api.us.hiddenlayer.ai"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
             print(markdown_generator.markdown_string.replace("\\n", "\n"), file=f)
 
-    if detected:
+    json_output = [res.to_dict() for res in all_scan_results]
+
+    if output_file:
+        with open(output_file, "w") as f:
+            json.dump(json_output, f, indent=4)
+
+    print(json.dumps(json_output, indent=4))
+
+    if detected and fail_on_detection:
         print("Malicious models found!")
         sys.exit(1)
 
@@ -100,6 +120,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Model Scanner")
     parser.add_argument("model_path", type=str)
     parser.add_argument("api_url", type=str)
+    parser.add_argument("fail_on_detection", type=bool)
+    parser.add_argument("output_file", type=str)
     args = parser.parse_args()
 
-    main(args.model_path, args.api_url)
+    main(args.model_path, args.api_url, args.fail_on_detection, args.output_file)

@@ -1,4 +1,6 @@
+import os
 import pytest
+import json
 
 import model_scan
 
@@ -38,3 +40,69 @@ def test_model_scan_azure(host):
         )
 
     assert e.value.code == 1
+
+
+@pytest.mark.parametrize("host", params)
+def test_model_scan_huggingface(host):
+    """Test scanning model from huggingface"""
+
+    with pytest.raises(SystemExit) as e:
+        model_scan.main(
+            model_path="hf://drhyrum/bert-tiny-torch-vuln",
+            api_url=host,
+        )
+
+    print(e)
+
+    assert e.value.code == 1
+
+
+@pytest.mark.parametrize("host", params)
+def test_output_path_not_json(host):
+    """Test scanning model from huggingface"""
+
+    with pytest.raises(ValueError):
+        model_scan.main(
+            model_path="hf://drhyrum/bert-tiny-torch-vuln",
+            api_url=host,
+            output_file="file.txt",
+        )
+
+
+@pytest.mark.parametrize("host", params)
+def test_output_path_is_dir(host):
+    """Test scanning model from huggingface"""
+
+    with pytest.raises(ValueError):
+        model_scan.main(
+            model_path="hf://drhyrum/bert-tiny-torch-vuln",
+            api_url=host,
+            output_file="./tests",
+            fail_on_detection=False,
+        )
+
+
+@pytest.mark.parametrize("host", params)
+def test_output_file(host):
+    """Test scanning model from huggingface"""
+
+    model_scan.main(
+        model_path="hf://drhyrum/bert-tiny-torch-vuln",
+        api_url=host,
+        output_file="output.json",
+        fail_on_detection=False,
+    )
+
+    with open("output.json", "r") as f:
+        output = json.load(f)
+
+    assert len(output) > 0
+
+    found_detection = False
+    for file in output:
+        if len(file["detections"]) > 0:
+            found_detection = True
+
+    os.remove("output.json")
+
+    assert found_detection

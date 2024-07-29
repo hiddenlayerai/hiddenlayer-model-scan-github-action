@@ -1,1 +1,1 @@
-hiddenlayer-sdk[aws,azure] @ git+https://github.com/hiddenlayerai/hiddenlayer-sdk-python.git@920a11286f4811f4f10f375aa0af1bb814dbe70d
+hiddenlayer-sdk[aws,azure,hf]==0.1.0
