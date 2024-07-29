@@ -3,6 +3,7 @@ import pytest
 import json
 
 import model_scan
+from unittest import TestCase
 
 params = [
     ("https://api.us.hiddenlayer.ai"),
@@ -106,3 +107,118 @@ def test_output_file(host):
     os.remove("output.json")
 
     assert found_detection
+
+
+@pytest.mark.parametrize("host", params)
+def test_output_write_fails_non_w_path(host):
+    """Test scan model fails if output path is not writable"""
+
+    with pytest.raises(IOError):
+        model_scan.main(
+            model_path="hf://drhyrum/bert-tiny-torch-vuln",
+            api_url=host,
+            output_file="/tests.json",
+            fail_on_detection=False,
+        )
+
+
+@pytest.mark.parametrize("host", params)
+def test_sarif_write_fails_non_w_path(host):
+    """Test scan model fails if sarif path is not writable"""
+
+    with pytest.raises(IOError):
+        model_scan.main(
+            model_path="hf://drhyrum/bert-tiny-torch-vuln",
+            api_url=host,
+            sarif_file="/tests.json",
+            fail_on_detection=False,
+        )
+
+
+@pytest.mark.parametrize("host", params)
+def test_sarif_output_no_detections(host):
+    """Test SARIF output is correct without detections."""
+
+    expected_output = {
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.1.0"}
+                },
+                "results": [],
+            }
+        ],
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+    }
+    output_path = "output.sarif"
+
+    model_scan.main(
+        model_path="./README.md",
+        api_url=host,
+        sarif_file=output_path,
+        fail_on_detection=False,
+    )
+
+    with open(output_path, "r") as f:
+        output = json.load(f)
+
+    os.remove(output_path)
+
+    TestCase().assertDictEqual(expected_output, output)
+
+
+@pytest.mark.parametrize("host", params)
+def test_sarif_output_detections(host):
+    """Test SARIF output is correct with detections"""
+
+    expected_output = {
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.1.0"}
+                },
+                "results": [
+                    {
+                        "ruleId": "pickle-str_webbrowser_open_global_inst",
+                        "level": "error",
+                        "message": {
+                            "text": "This detection rule was triggered by the presence of a function or library that can be used to exfiltrate data. Offending module / function:webbrowser."
+                        },
+                        "locations": [
+                            {
+                                "physicalLocation": {
+                                    "artifactLocation": {
+                                        "uri": "/tmp/drhyrum/bert-tiny-torch-vuln/pytorch_model.bin"
+                                    }
+                                }
+                            }
+                        ],
+                        "properties": {
+                            "sha256": "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce",
+                            "modelType": "pytorch",
+                            "modelSubType": ["pytorch"],
+                        },
+                    }
+                ],
+            }
+        ],
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+    }
+
+    output_path = "output.sarif"
+
+    model_scan.main(
+        model_path="hf://drhyrum/bert-tiny-torch-vuln",
+        api_url=host,
+        sarif_file=output_path,
+        fail_on_detection=False,
+    )
+
+    with open(output_path, "r") as f:
+        output = json.load(f)
+
+    os.remove(output_path)
+
+    TestCase().assertDictEqual(expected_output, output)
