@@ -193,3 +193,28 @@ jobs:
             })
 ```
 
+### Save Scan Results as SARIF and upload them to Github Security
+
+```yaml
+jobs:
+  scan_huggingface_model:
+    runs-on: ubuntu-latest
+    name: Scan a HuggingFace Model
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model on Azure Blob
+        id: scan_model_huggingface
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        with:
+          model_path: hf://flair/ner-english-ontonotes
+          fail_on_detection: false
+          sarif_file: output.sarif
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: output.sarif
+```
