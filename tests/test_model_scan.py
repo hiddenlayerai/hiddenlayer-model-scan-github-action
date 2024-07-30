@@ -144,7 +144,7 @@ def test_sarif_output_no_detections(host):
         "runs": [
             {
                 "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.1.0"}
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.7.0"}
                 },
                 "results": [],
             }
@@ -177,7 +177,7 @@ def test_sarif_output_detections(host):
         "runs": [
             {
                 "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.1.0"}
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.7.0"}
                 },
                 "results": [
                     {

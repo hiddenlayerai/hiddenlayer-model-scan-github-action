@@ -77,7 +77,7 @@ class SarifV2Output(BaseModel):
                     tool=SarifV2Tool(
                         driver=SarifV2ToolDriver(
                             name="HiddenLayer Model Scanner",
-                            version="24.1.0",
+                            version="24.7.0",
                         )
                     ),
                     results=[],
