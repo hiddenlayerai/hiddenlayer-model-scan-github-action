@@ -10,6 +10,7 @@ from hiddenlayer import HiddenlayerServiceClient
 from urllib.parse import urlparse
 
 import markdown
+import sarif
 
 
 def main(
@@ -17,6 +18,7 @@ def main(
     api_url: str = "https://api.us.hiddenlayer.ai",
     fail_on_detection: bool = True,
     output_file: Optional[str] = None,
+    sarif_file: Optional[str] = None,
 ):
     """
     Scans a model using the HiddenLayer API.
@@ -26,12 +28,30 @@ def main(
     hl_api_id = os.getenv("HL_CLIENT_ID")
     hl_api_key = os.getenv("HL_CLIENT_SECRET")
 
+    # Run "state of the world checks"
+    # Fail on stuff like invalid params, unwriteable paths early
+    # so users don't run a entire scan just to have it fail on something
+    # we could have checked for
+
     # If the output file doesn't end in json or it's a dir, error early
     if output_file and (
         Path(output_file).is_dir() or not output_file.endswith(".json")
     ):
         raise ValueError("Output file must be a json file, i.e `output.json`")
 
+    if output_file:
+        if not os.access(Path(output_file).absolute().parent, os.W_OK):
+            raise IOError(
+                f"The current user does not have permissions to write to {Path(output_file).absolute()}"
+            )
+
+    if sarif_file:
+        if not os.access(Path(sarif_file).absolute().parent, os.W_OK):
+            raise IOError(
+                f"The current user does not have permissions to write to {Path(sarif_file).absolute()}"
+            )
+
+    # Client inits
     hl_client = HiddenlayerServiceClient(
         host=api_url, api_id=hl_api_id, api_key=hl_api_key
     )
@@ -104,12 +124,16 @@ def main(
             print(markdown_generator.markdown_string.replace("\\n", "\n"), file=f)
 
     json_output = [res.to_dict() for res in all_scan_results]
+    print(json.dumps(json_output, indent=4))
 
     if output_file:
         with open(output_file, "w") as f:
             json.dump(json_output, f, indent=4)
 
-    print(json.dumps(json_output, indent=4))
+    if sarif_file:
+        sarif_output = sarif.SarifV2Output.from_scan_results(all_scan_results)
+        with open(sarif_file, "w") as f:
+            json.dump(sarif_output.model_dump(by_alias=True), f, indent=4)
 
     if detected and fail_on_detection:
         print("Malicious models found!")
@@ -122,6 +146,13 @@ if __name__ == "__main__":
     parser.add_argument("api_url", type=str)
     parser.add_argument("fail_on_detection", type=bool)
     parser.add_argument("output_file", type=str)
+    parser.add_argument("sarif_file", type=str)
     args = parser.parse_args()
 
-    main(args.model_path, args.api_url, args.fail_on_detection, args.output_file)
+    main(
+        args.model_path,
+        args.api_url,
+        args.fail_on_detection,
+        args.output_file,
+        args.sarif_file,
+    )
