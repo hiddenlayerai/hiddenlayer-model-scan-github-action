@@ -13,6 +13,23 @@ import markdown
 import sarif
 
 
+# From the deprecated disutils package that used to be apart of the stdlib
+def strtobool(val):
+    """Convert a string representation of truth to true (1) or false (0).
+
+    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
+    are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
+    'val' is anything else.
+    """
+    val = val.lower()
+    if val in ("y", "yes", "t", "true", "on", "1"):
+        return 1
+    elif val in ("n", "no", "f", "false", "off", "0"):
+        return 0
+    else:
+        raise ValueError("invalid truth value %r" % (val,))
+
+
 def main(
     model_path: str,
     api_url: str = "https://api.us.hiddenlayer.ai",
@@ -144,15 +161,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Model Scanner")
     parser.add_argument("model_path", type=str)
     parser.add_argument("api_url", type=str)
-    parser.add_argument("fail_on_detection", type=bool)
     parser.add_argument("output_file", type=str)
     parser.add_argument("sarif_file", type=str)
-    args = parser.parse_args()
+    parser.add_argument("--fail-on-detection", action="store_true", required=False)
+
+    # Since this is running from a Github action, if there are 5 total args to the program
+    # there will always be 5 inputs to the program.
+    # Ex python3 model_scan.py ./model_path https://... output.json output.sarif
+    # will get translated to:
+    #   (model_path, https://..., output.json, output.sarif, '')
+    # `parse_known_args` allows there to be trailing args while allowing us to safely
+    # get the args we want from the input
+    args = parser.parse_known_args()
 
     main(
-        args.model_path,
-        args.api_url,
-        args.fail_on_detection,
-        args.output_file,
-        args.sarif_file,
+        args[0].model_path,
+        args[0].api_url,
+        args[0].fail_on_detection,
+        args[0].output_file,
+        args[0].sarif_file,
     )

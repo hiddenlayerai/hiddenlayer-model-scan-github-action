@@ -4,7 +4,7 @@ branding:
   icon: lock
   color: green
 inputs:
-  model_path:  # id of input
+  model_path:
     description: 'Path to the model, either a file or a folder'
     required: true
   api_url:
@@ -32,6 +32,6 @@ runs:
   args:
     - ${{ inputs.model_path }}
     - ${{ inputs.api_url }}
-    - ${{ inputs.fail_on_detection }}
-    - ${{ inputs.output_file}}
-    - ${{ inputs.sarif_file}}
+    - ${{ inputs.output_file }}
+    - ${{ inputs.sarif_file }}
+    - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}

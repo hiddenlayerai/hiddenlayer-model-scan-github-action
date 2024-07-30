@@ -1,0 +1,31 @@
+
+name: Weekly Action Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 15 * * 1
+
+jobs:
+  test_sarif_flow:
+    runs-on: ubuntu-latest    
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model on HuggingFace
+        id: scan_model_huggingface
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@create-weekly-action-test
+        with:
+          model_path: hf://drhyrum/bert-tiny-torch-vuln
+          fail_on_detection: false
+          output_file: output.json
+          sarif_file: output.sarif
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: output.sarif

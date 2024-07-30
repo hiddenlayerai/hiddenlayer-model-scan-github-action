@@ -153,7 +153,7 @@ jobs:
     name: Scan a HuggingFace Model
     steps:
       - uses: actions/checkout@v3
-      - name: Scan model on Azure Blob
+      - name: Scan model on HuggingFace
         id: scan_model_huggingface
         uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
         with:
@@ -199,6 +199,8 @@ jobs:
 jobs:
   scan_huggingface_model:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     name: Scan a HuggingFace Model
     steps:
       - uses: actions/checkout@v3
