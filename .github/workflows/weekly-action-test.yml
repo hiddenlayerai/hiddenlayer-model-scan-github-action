@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on HuggingFace
         id: scan_model_huggingface
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@create-weekly-action-test
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@main
         with:
           model_path: hf://drhyrum/bert-tiny-torch-vuln
           fail_on_detection: false
