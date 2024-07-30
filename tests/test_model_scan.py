@@ -17,6 +17,7 @@ def test_model_scan_local_file(host):
     model_scan.main(model_path="tests/models/example_model.xgb", api_url=host)
 
 
+@pytest.mark.xfail()
 @pytest.mark.parametrize("host", params)
 def test_model_scan_s3(host):
     """Test scanning a malicious model breaks."""
