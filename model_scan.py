@@ -157,8 +157,6 @@ if __name__ == "__main__":
     # get the args we want from the input
     args = parser.parse_known_args()
 
-    print(args)
-
     main(
         args[0].model_path,
         args[0].api_url,
