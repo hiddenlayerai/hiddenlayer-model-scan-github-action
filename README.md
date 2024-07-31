@@ -26,6 +26,8 @@ For more information about GitHub Actions:
 
 `output_file`: Output file to write the scan results to. Defaults to display the results in stdout.
 
+`sarif_file`: Output file to write the scan results to in the SARIF format.
+
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
 ## Environment Variables
@@ -59,7 +61,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model
         id: scan_model
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: ./models/pytorch_model.bin
         env:
@@ -78,7 +80,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model
         id: scan_model
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@latest
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: ./models/pytorch_model.bin
           api_url: "https://your.enterprise.url"
@@ -95,7 +97,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: ./models
         env:
@@ -114,7 +116,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on s3
         id: scan_model_s3
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: s3://bucket/pytorch_model.bin
         env:
@@ -135,7 +137,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on Azure Blob
         id: scan_model_azure
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: https://<storageaccountname>.blob.core.windows.net/<container>/path/to/model.bin
         env:
@@ -155,7 +157,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on HuggingFace
         id: scan_model_huggingface
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: hf://flair/ner-english-ontonotes
         env:
@@ -174,7 +176,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model folder
         id: scan_model_folder
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: ./path_to_model_folder or s3 path
         env:
@@ -206,7 +208,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Scan model on Azure Blob
         id: scan_model_huggingface
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.2.0
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v0.3.0
         with:
           model_path: hf://flair/ner-english-ontonotes
           fail_on_detection: false
