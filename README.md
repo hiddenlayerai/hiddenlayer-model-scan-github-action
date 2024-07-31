@@ -26,6 +26,8 @@ For more information about GitHub Actions:
 
 `output_file`: Output file to write the scan results to. Defaults to display the results in stdout.
 
+`sarif_file`: Output file to write the scan results to in the SARIF format.
+
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
 ## Environment Variables
