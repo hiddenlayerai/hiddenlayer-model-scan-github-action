@@ -23,6 +23,10 @@ inputs:
     description: Writes detection output in the SARIF format to a json file.
     required: false
     default: null
+  run_id:
+    description: Run ID
+    required: false
+    default: null
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
@@ -34,4 +38,5 @@ runs:
     - ${{ inputs.api_url }}
     - ${{ inputs.output_file }}
     - ${{ inputs.sarif_file }}
+    - ${{ inputs.run_id }}
     - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}

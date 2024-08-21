@@ -145,7 +145,7 @@ def test_sarif_output_no_detections(host):
         "runs": [
             {
                 "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.7.0"}
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.8.0"}
                 },
                 "results": [],
             }
@@ -164,6 +164,9 @@ def test_sarif_output_no_detections(host):
     with open(output_path, "r") as f:
         output = json.load(f)
 
+    # Dynamic field that must exist but doesn't need to be validated
+    del output["runs"][0]["automationDetails"]
+
     os.remove(output_path)
 
     TestCase().assertDictEqual(expected_output, output)
@@ -178,7 +181,7 @@ def test_sarif_output_detections(host):
         "runs": [
             {
                 "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.7.0"}
+                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.8.0"}
                 },
                 "results": [
                     {
@@ -219,6 +222,9 @@ def test_sarif_output_detections(host):
 
     with open(output_path, "r") as f:
         output = json.load(f)
+
+    # Dynamic field that must exist but doesn't need to be validated
+    del output["runs"][0]["automationDetails"]
 
     os.remove(output_path)
 
