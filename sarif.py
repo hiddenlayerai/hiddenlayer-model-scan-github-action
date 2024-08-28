@@ -1,6 +1,8 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Self
 from enum import Enum
+from datetime import datetime
+from typing import Optional
 
 from hiddenlayer.sdk.models import ScanResults
 
@@ -57,9 +59,16 @@ class SarifV2Tool(BaseModel):
     driver: SarifV2ToolDriver
 
 
+class SarifV2AutomationDetails(BaseModel):
+    id: str
+
+
 class SarifV2Run(BaseModel):
     tool: SarifV2Tool
     results: List[SarifV2RunResult]
+    automation_details: Optional[SarifV2AutomationDetails] = Field(
+        serialization_alias="automationDetails"
+    )
 
 
 class SarifV2Output(BaseModel):
@@ -68,7 +77,12 @@ class SarifV2Output(BaseModel):
     sarif_schema: str = Field(serialization_alias="$schema")
 
     @classmethod
-    def from_scan_results(cls, scan_results: List[ScanResults]) -> Self:
+    def from_scan_results(
+        cls, scan_results: List[ScanResults], run_id: Optional[str] = None
+    ) -> Self:
+        if run_id and not run_id.endswith("/"):
+            run_id = f"{run_id}/"
+
         sarif_output = cls(
             version="2.1.0",
             sarif_schema="https://json.schemastore.org/sarif-2.1.0.json",
@@ -77,8 +91,12 @@ class SarifV2Output(BaseModel):
                     tool=SarifV2Tool(
                         driver=SarifV2ToolDriver(
                             name="HiddenLayer Model Scanner",
-                            version="24.7.0",
+                            version="24.8.0",
                         )
+                    ),
+                    automation_details=SarifV2AutomationDetails(
+                        id=run_id
+                        or f"modelscan-run-{datetime.now().strftime('%Y%m%dT%H%M%S')}/"
                     ),
                     results=[],
                 )

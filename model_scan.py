@@ -19,6 +19,7 @@ def main(
     fail_on_detection: bool = True,
     output_file: Optional[str] = None,
     sarif_file: Optional[str] = None,
+    run_id: Optional[str] = None,
 ):
     """
     Scans a model using the HiddenLayer API.
@@ -131,7 +132,7 @@ def main(
             json.dump(json_output, f, indent=4)
 
     if sarif_file:
-        sarif_output = sarif.SarifV2Output.from_scan_results(all_scan_results)
+        sarif_output = sarif.SarifV2Output.from_scan_results(all_scan_results, run_id)
         with open(sarif_file, "w") as f:
             json.dump(sarif_output.model_dump(by_alias=True), f, indent=4)
 
@@ -146,6 +147,7 @@ if __name__ == "__main__":
     parser.add_argument("api_url", type=str)
     parser.add_argument("output_file", type=str)
     parser.add_argument("sarif_file", type=str)
+    parser.add_argument("run_id", type=str)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
@@ -163,4 +165,5 @@ if __name__ == "__main__":
         args[0].fail_on_detection,
         args[0].output_file,
         args[0].sarif_file,
+        args[0].run_id,
     )

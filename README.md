@@ -28,6 +28,8 @@ For more information about GitHub Actions:
 
 `sarif_file`: Output file to write the scan results to in the SARIF format.
 
+`run_id`: Run id for the current run of the model scanner. Defaults to `YYYYMMDDTHHMMSS`
+
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
 ## Environment Variables
