@@ -12,7 +12,7 @@ jobs:
     permissions:
       security-events: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Scan model on HuggingFace
         id: scan_model_huggingface
         uses: hiddenlayerai/hiddenlayer-model-scan-github-action@main
