@@ -20,7 +20,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Scan model on HuggingFace
         id: scan_model_huggingface
         uses: hiddenlayerai/hiddenlayer-model-scan-github-action@fbd712b49690f1b206d9a37b5f5aad2e04451669 # main
