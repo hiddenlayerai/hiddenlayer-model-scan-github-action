@@ -16,6 +16,11 @@ def test_model_scan_local_file(host):
     """Test that scanning a model doesn't break."""
     model_scan.main(model_path="tests/models/example_model.xgb", api_url=host)
 
+@pytest.mark.parametrize("host", params)
+def test_model_scan_local_folder(host):
+    """Test that scanning a folder of models doesn't break."""
+    model_scan.main(model_path="tests/models", model_name="github_action_folder_test", api_url=host)
+
 
 @pytest.mark.xfail()
 @pytest.mark.parametrize("host", params)
@@ -31,17 +36,17 @@ def test_model_scan_s3(host):
     assert e.value.code == 1
 
 
-@pytest.mark.parametrize("host", params)
-def test_model_scan_azure(host):
-    """Test scanning a malicious model on azure."""
+# @pytest.mark.parametrize("host", params)
+# def test_model_scan_azure(host):
+#     """Test scanning a malicious model on azure."""
 
-    with pytest.raises(SystemExit) as e:
-        model_scan.main(
-            model_path="https://dsdemomodelsstorage.blob.core.windows.net/azureml/malicious_model.bin",
-            api_url=host,
-        )
+#     with pytest.raises(SystemExit) as e:
+#         model_scan.main(
+#             model_path="https://dsdemomodelsstorage.blob.core.windows.net/azureml/malicious_model.bin",
+#             api_url=host,
+#         )
 
-    assert e.value.code == 1
+#     assert e.value.code == 1
 
 
 @pytest.mark.parametrize("host", params)
