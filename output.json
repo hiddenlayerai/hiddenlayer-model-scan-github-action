@@ -1,0 +1,18 @@
+{
+    "file_count": 7,
+    "files_with_detections_count": 1,
+    "detection_count": 1,
+    "detection_categories": [
+        "Network Requests"
+    ],
+    "inventory": {
+        "model_name": "drhyrum/bert-tiny-torch-vuln",
+        "model_version": "91",
+        "model_source": "adhoc",
+        "requested_scan_location": "Local Model Upload",
+        "model_id": "9fd950a8-0ed6-4165-a9c8-930bc9db948f",
+        "model_version_id": "8ec8eef8-5cd2-44d9-ad13-68619418e0de"
+    },
+    "version": "25.1.0",
+    "scan_id": "5d524aff-cbde-4fb3-9703-cef9f3b2255d",
+    "start_time": 

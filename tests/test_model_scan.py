@@ -36,17 +36,17 @@ def test_model_scan_s3(host):
     assert e.value.code == 1
 
 
-# @pytest.mark.parametrize("host", params)
-# def test_model_scan_azure(host):
-#     """Test scanning a malicious model on azure."""
+@pytest.mark.parametrize("host", params)
+def test_model_scan_azure(host):
+    """Test scanning a malicious model on azure."""
 
-#     with pytest.raises(SystemExit) as e:
-#         model_scan.main(
-#             model_path="https://dsdemomodelsstorage.blob.core.windows.net/azureml/malicious_model.bin",
-#             api_url=host,
-#         )
+    with pytest.raises(SystemExit) as e:
+        model_scan.main(
+            model_path="https://hiddenlayeraitestfiles.blob.core.windows.net/azureml/malicious_model.bin",
+            api_url=host,
+        )
 
-#     assert e.value.code == 1
+    assert e.value.code == 1
 
 
 @pytest.mark.parametrize("host", params)
