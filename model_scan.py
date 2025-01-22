@@ -86,6 +86,8 @@ def main(
         )
 
     elif model_path.startswith("hf://"):
+        if model_name == model_path:
+            model_name = model_path.removeprefix("hf://")
         scan_result = hl_client.model_scanner.scan_huggingface_model(
             repo_id=model_path.removeprefix("hf://"),
             hf_token=os.getenv("HUGGINGFACE_TOKEN"),
@@ -126,10 +128,10 @@ def main(
 
     if output_file:
         with open(output_file, "w") as f:
-            json.dump(json_output, f, indent=4)
+            json.dump(json_output, f, indent=4, default=str)
 
     if sarif_file:
-        sarif_output = hl_client.model_scanner.get_sarif_results(model_name)
+        sarif_output = hl_client.model_scanner.get_sarif_results(model_name=model_name)
         with open(sarif_file, "w") as f:
             json.dump(sarif_output.model_dump(by_alias=True), f, indent=4)
 

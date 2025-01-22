@@ -106,9 +106,8 @@ def test_output_file(host):
     assert len(output) > 0
 
     found_detection = False
-    for file in output:
-        if len(file["detections"]) > 0:
-            found_detection = True
+    if output["detection_count"] > 0:
+        found_detection = True
 
     os.remove("output.json")
 
