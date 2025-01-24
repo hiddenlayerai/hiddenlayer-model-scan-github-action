@@ -87,15 +87,17 @@ def main(
         scan_result = hl_client.model_scanner.scan_huggingface_model(
             repo_id=model_path.removeprefix("hf://"),
             hf_token=os.getenv("HUGGINGFACE_TOKEN"),
-            model_name=model_name
+            model_name=model_name,
         )
     elif Path(model_path).is_dir():
-        scan_result = hl_client.model_scanner.scan_folder(path=Path(model_path), model_name=model_name)
+        scan_result = hl_client.model_scanner.scan_folder(
+            path=Path(model_path), model_name=model_name
+        )
     else:
         model_path: Path = Path(model_path)
         scan_result = hl_client.model_scanner.scan_file(
-                model_name=model_name, model_path=model_path
-            )
+            model_name=model_name, model_path=model_path
+        )
 
     detected = False  # Whether we detected a malicious file during the scans
 

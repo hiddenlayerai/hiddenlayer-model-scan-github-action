@@ -15,10 +15,13 @@ def test_model_scan_local_file(host):
     """Test that scanning a model doesn't break."""
     model_scan.main(model_path="tests/models/example_model.xgb", api_url=host)
 
+
 @pytest.mark.parametrize("host", params)
 def test_model_scan_local_folder(host):
     """Test that scanning a folder of models doesn't break."""
-    model_scan.main(model_path="tests/models", model_name="github_action_folder_test", api_url=host)
+    model_scan.main(
+        model_path="tests/models", model_name="github_action_folder_test", api_url=host
+    )
 
 
 @pytest.mark.xfail()
@@ -142,7 +145,7 @@ def test_sarif_write_fails_non_w_path(host):
 @pytest.mark.parametrize("host", params)
 def test_sarif_output_no_detections(host):
     """Test SARIF output is correct without detections."""
-    
+
     output_path = "no_detections_output.sarif"
 
     model_scan.main(
@@ -161,8 +164,9 @@ def test_sarif_output_no_detections(host):
 
     os.remove(output_path)
 
-    assert(len(output["runs"][0]["results"]) == 0)
-    assert(output["runs"][0]["tool"]["driver"]["name"] == "HiddenLayer Model Scanner")
+    assert len(output["runs"][0]["results"]) == 0
+    assert output["runs"][0]["tool"]["driver"]["name"] == "HiddenLayer Model Scanner"
+
 
 @pytest.mark.parametrize("host", params)
 def test_sarif_output_detections(host):
@@ -182,9 +186,21 @@ def test_sarif_output_detections(host):
 
     os.remove(output_path)
 
-    assert(len(output["runs"][0]["results"]) > 0)
-    assert(output["runs"][0]["results"][0]["ruleId"] == "PICKLE_0057_202408")
-    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["sha256"] == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce")
-    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["modelType"] == "pytorch")
-    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["problem.severity"] == "high")
-    
+    assert len(output["runs"][0]["results"]) > 0
+    assert output["runs"][0]["results"][0]["ruleId"] == "PICKLE_0057_202408"
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"]["sha256"]
+        == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce"
+    )
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+            "modelType"
+        ]
+        == "pytorch"
+    )
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+            "problem.severity"
+        ]
+        == "high"
+    )
