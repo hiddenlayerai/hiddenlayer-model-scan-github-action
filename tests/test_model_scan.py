@@ -3,7 +3,6 @@ import pytest
 import json
 
 import model_scan
-from unittest import TestCase
 
 params = [
     ("https://api.us.hiddenlayer.ai"),
