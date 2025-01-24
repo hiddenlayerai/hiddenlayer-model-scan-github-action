@@ -65,8 +65,6 @@ def main(
 
     if model_path.startswith("s3://"):
         bucket, key = model_path.split("/", 2)[-1].split("/", 1)
-        file = key.split("/")[-1]
-
         scan_result = hl_client.model_scanner.scan_s3_model(
             model_name=model_name, bucket=bucket, key=key
         )
