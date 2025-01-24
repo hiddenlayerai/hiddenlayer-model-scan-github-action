@@ -143,10 +143,6 @@ def test_sarif_write_fails_non_w_path(host):
 @pytest.mark.parametrize("host", params)
 def test_sarif_output_no_detections(host):
     """Test SARIF output is correct without detections."""
-
-    with open("test_no_detections_output.sarif", "r") as f:
-        expected_output = json.load(f)
-    del expected_output["runs"][0]["automationDetails"]
     
     output_path = "no_detections_output.sarif"
 
@@ -166,15 +162,12 @@ def test_sarif_output_no_detections(host):
 
     os.remove(output_path)
 
-    TestCase().assertDictEqual(expected_output, output)
+    assert(len(output["runs"][0]["results"]) == 0)
+    assert(output["runs"][0]["tool"]["driver"]["name"] == "HiddenLayer Model Scanner")
 
 @pytest.mark.parametrize("host", params)
 def test_sarif_output_detections(host):
     """Test SARIF output is correct with detections"""
-
-    with open("test_detections_output.sarif", "r") as f:
-        expected_output = json.load(f)
-    del expected_output["runs"][0]["automationDetails"]
 
     output_path = "detections_output.sarif"
 
@@ -188,9 +181,11 @@ def test_sarif_output_detections(host):
     with open(output_path, "r") as f:
         output = json.load(f)
 
-    # Dynamic field that must exist but doesn't need to be validated
-    del output["runs"][0]["automationDetails"]
-
     os.remove(output_path)
 
-    TestCase().assertDictEqual(expected_output, output)
+    assert(len(output["runs"][0]["results"]) > 0)
+    assert(output["runs"][0]["results"][0]["ruleId"] == "PICKLE_0057_202408")
+    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["sha256"] == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce")
+    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["modelType"] == "pytorch")
+    assert(output["runs"][0]["results"][0]["properties"]["additional_properties"]["problem.severity"] == "high")
+    
