@@ -1,0 +1,134 @@
+{
+    "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+    "version": "2.1.0",
+    "runs": [
+        {
+            "tool": {
+                "driver": {
+                    "guid": null,
+                    "name": "HiddenLayer Model Scanner",
+                    "organization": null,
+                    "product": null,
+                    "productSuite": null,
+                    "shortDescription": null,
+                    "fullDescription": null,
+                    "fullName": null,
+                    "version": "25.1.0",
+                    "semanticVersion": null,
+                    "dottedQuadFileVersion": null,
+                    "releaseDateUtc": null,
+                    "downloadUri": null,
+                    "informationUri": "https://hiddenlayer.com",
+                    "globalMessageStrings": null,
+                    "notifications": null,
+                    "rules": null,
+                    "taxa": null,
+                    "locations": null,
+                    "language": "en-US",
+                    "contents": null,
+                    "isComprehensive": false,
+                    "localizedDataSemanticVersion": null,
+                    "minimumRequiredLocalizedDataSemanticVersion": null,
+                    "associatedComponent": null,
+                    "translationMetadata": null,
+                    "supportedTaxonomies": null,
+                    "properties": null
+                },
+                "extensions": null,
+                "properties": null
+            },
+            "invocations": null,
+            "conversion": null,
+            "language": "en-US",
+            "versionControlProvenance": null,
+            "originalUriBaseIds": null,
+            "artifacts": null,
+            "logicalLocations": null,
+            "graphs": null,
+            "results": [
+                {
+                    "ruleId": "PICKLE_0057_202408",
+                    "ruleIndex": -1,
+                    "rule": null,
+                    "kind": "fail",
+                    "level": "error",
+                    "message": {
+                        "text": null,
+                        "markdown": null,
+                        "id": null,
+                        "arguments": null,
+                        "properties": null
+                    },
+                    "analysisTarget": null,
+                    "locations": [
+                        {
+                            "id": -1,
+                            "physicalLocation": {
+                                "address": null,
+                                "artifactLocation": null,
+                                "region": null,
+                                "contextRegion": null,
+                                "properties": null
+                            },
+                            "logicalLocations": null,
+                            "message": null,
+                            "annotations": null,
+                            "relationships": null,
+                            "properties": null
+                        }
+                    ],
+                    "guid": null,
+                    "correlationGuid": null,
+                    "occurrenceCount": null,
+                    "partialFingerprints": null,
+                    "fingerprints": null,
+                    "stacks": null,
+                    "codeFlows": null,
+                    "graphs": null,
+                    "graphTraversals": null,
+                    "relatedLocations": null,
+                    "suppressions": null,
+                    "baselineState": null,
+                    "rank": -1,
+                    "attachments": null,
+                    "hostedViewerUri": null,
+                    "workItemUris": null,
+                    "provenance": null,
+                    "fixes": null,
+                    "taxa": null,
+                    "webRequest": null,
+                    "webResponse": null,
+                    "properties": {
+                        "tags": null,
+                        "additional_properties": {
+                            "sha256": "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce",
+                            "modelType": "pytorch",
+                            "modelSubType": [],
+                            "problem.severity": "high"
+                        }
+                    }
+                }
+            ],
+            "automationDetails": null,
+            "runAggregates": null,
+            "baselineGuid": null,
+            "redactionTokens": null,
+            "defaultEncoding": null,
+            "defaultSourceLanguage": null,
+            "newlineSequences": null,
+            "columnKind": null,
+            "externalPropertyFileReferences": null,
+            "threadFlowLocations": null,
+            "taxonomies": null,
+            "addresses": null,
+            "translations": null,
+            "policies": null,
+            "webRequests": null,
+            "webResponses": null,
+            "specialLocations": null,
+            "properties": null
+        }
+    ],
+    "inlineExternalProperties": null,
+    "properties": null
+}
