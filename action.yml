@@ -27,6 +27,10 @@ inputs:
     description: Run ID
     required: false
     default: null
+  model_name:
+    description: Model name
+    required: false
+    default: null
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
@@ -39,4 +43,5 @@ runs:
     - ${{ inputs.output_file }}
     - ${{ inputs.sarif_file }}
     - ${{ inputs.run_id }}
+    - ${{ inputs.model_name }}
     - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}

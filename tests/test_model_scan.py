@@ -3,7 +3,6 @@ import pytest
 import json
 
 import model_scan
-from unittest import TestCase
 
 params = [
     ("https://api.us.hiddenlayer.ai"),
@@ -15,6 +14,14 @@ params = [
 def test_model_scan_local_file(host):
     """Test that scanning a model doesn't break."""
     model_scan.main(model_path="tests/models/example_model.xgb", api_url=host)
+
+
+@pytest.mark.parametrize("host", params)
+def test_model_scan_local_folder(host):
+    """Test that scanning a folder of models doesn't break."""
+    model_scan.main(
+        model_path="tests/models", model_name="github_action_folder_test", api_url=host
+    )
 
 
 @pytest.mark.xfail()
@@ -37,7 +44,7 @@ def test_model_scan_azure(host):
 
     with pytest.raises(SystemExit) as e:
         model_scan.main(
-            model_path="https://dsdemomodelsstorage.blob.core.windows.net/azureml/malicious_model.bin",
+            model_path="https://hiddenlayeraitestfiles.blob.core.windows.net/azureml/malicious_model.bin",
             api_url=host,
         )
 
@@ -101,9 +108,8 @@ def test_output_file(host):
     assert len(output) > 0
 
     found_detection = False
-    for file in output:
-        if len(file["detections"]) > 0:
-            found_detection = True
+    if output["detection_count"] > 0:
+        found_detection = True
 
     os.remove("output.json")
 
@@ -140,22 +146,11 @@ def test_sarif_write_fails_non_w_path(host):
 def test_sarif_output_no_detections(host):
     """Test SARIF output is correct without detections."""
 
-    expected_output = {
-        "version": "2.1.0",
-        "runs": [
-            {
-                "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.8.0"}
-                },
-                "results": [],
-            }
-        ],
-        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-    }
-    output_path = "output.sarif"
+    output_path = "no_detections_output.sarif"
 
     model_scan.main(
         model_path="./README.md",
+        model_name="README.md",
         api_url=host,
         sarif_file=output_path,
         fail_on_detection=False,
@@ -169,49 +164,15 @@ def test_sarif_output_no_detections(host):
 
     os.remove(output_path)
 
-    TestCase().assertDictEqual(expected_output, output)
+    assert len(output["runs"][0]["results"]) == 0
+    assert output["runs"][0]["tool"]["driver"]["name"] == "HiddenLayer Model Scanner"
 
 
 @pytest.mark.parametrize("host", params)
 def test_sarif_output_detections(host):
     """Test SARIF output is correct with detections"""
 
-    expected_output = {
-        "version": "2.1.0",
-        "runs": [
-            {
-                "tool": {
-                    "driver": {"name": "HiddenLayer Model Scanner", "version": "24.8.0"}
-                },
-                "results": [
-                    {
-                        "ruleId": "pickle-str_webbrowser_open_global_inst",
-                        "level": "error",
-                        "message": {
-                            "text": "This detection rule was triggered by the presence of a function or library that can be used to exfiltrate data. Offending module / function:webbrowser."
-                        },
-                        "locations": [
-                            {
-                                "physicalLocation": {
-                                    "artifactLocation": {
-                                        "uri": "/tmp/drhyrum/bert-tiny-torch-vuln/pytorch_model.bin"
-                                    }
-                                }
-                            }
-                        ],
-                        "properties": {
-                            "sha256": "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce",
-                            "modelType": "pytorch",
-                            "modelSubType": ["pytorch"],
-                        },
-                    }
-                ],
-            }
-        ],
-        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-    }
-
-    output_path = "output.sarif"
+    output_path = "detections_output.sarif"
 
     model_scan.main(
         model_path="hf://drhyrum/bert-tiny-torch-vuln",
@@ -223,9 +184,23 @@ def test_sarif_output_detections(host):
     with open(output_path, "r") as f:
         output = json.load(f)
 
-    # Dynamic field that must exist but doesn't need to be validated
-    del output["runs"][0]["automationDetails"]
-
     os.remove(output_path)
 
-    TestCase().assertDictEqual(expected_output, output)
+    assert len(output["runs"][0]["results"]) > 0
+    assert output["runs"][0]["results"][0]["ruleId"] == "PICKLE_0057_202408"
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"]["sha256"]
+        == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce"
+    )
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+            "modelType"
+        ]
+        == "pytorch"
+    )
+    assert (
+        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+            "problem.severity"
+        ]
+        == "high"
+    )
