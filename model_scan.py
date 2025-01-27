@@ -146,7 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("output_file", type=str)
     parser.add_argument("sarif_file", type=str)
     parser.add_argument("run_id", type=str)
-    parser.add_argument("model_name", type=str, required=False)
+    parser.add_argument("model_name", type=str)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
