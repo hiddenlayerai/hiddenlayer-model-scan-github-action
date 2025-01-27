@@ -10,7 +10,6 @@ from hiddenlayer import HiddenlayerServiceClient
 from urllib.parse import urlparse
 
 import markdown
-import sarif
 
 
 def main(
@@ -20,6 +19,7 @@ def main(
     output_file: Optional[str] = None,
     sarif_file: Optional[str] = None,
     run_id: Optional[str] = None,
+    model_name: Optional[str] = None,
 ):
     """
     Scans a model using the HiddenLayer API.
@@ -28,6 +28,8 @@ def main(
     """
     hl_api_id = os.getenv("HL_CLIENT_ID")
     hl_api_key = os.getenv("HL_CLIENT_SECRET")
+
+    model_name = model_name or model_path
 
     # Run "state of the world checks"
     # Fail on stuff like invalid params, unwriteable paths early
@@ -63,53 +65,49 @@ def main(
 
     if model_path.startswith("s3://"):
         bucket, key = model_path.split("/", 2)[-1].split("/", 1)
-        file = key.split("/")[-1]
-
-        scan_results = hl_client.model_scanner.scan_s3_model(
-            model_name=file, bucket=bucket, key=key
+        scan_result = hl_client.model_scanner.scan_s3_model(
+            model_name=model_name, bucket=bucket, key=key
         )
 
-        all_scan_results = [scan_results]
     elif model_path.startswith("https://") and "blob.core.windows.net" in model_path:
         parsed_url = urlparse(model_path)
 
         account_url = f"{parsed_url.scheme}://{parsed_url.hostname}"
         container, blob = parsed_url.path.removeprefix("/").split("/", maxsplit=1)
 
-        scan_results = hl_client.model_scanner.scan_azure_blob_model(
-            model_name=blob,
+        scan_result = hl_client.model_scanner.scan_azure_blob_model(
+            model_name=model_name,
             account_url=account_url,
             container=container,
             blob=blob,
             credential=os.getenv("AZURE_BLOB_SAS_KEY"),
         )
 
-        all_scan_results = [scan_results]
     elif model_path.startswith("hf://"):
-        all_scan_results = hl_client.model_scanner.scan_huggingface_model(
+        scan_result = hl_client.model_scanner.scan_huggingface_model(
             repo_id=model_path.removeprefix("hf://"),
             hf_token=os.getenv("HUGGINGFACE_TOKEN"),
+            model_name=model_name,
         )
     elif Path(model_path).is_dir():
-        all_scan_results = hl_client.model_scanner.scan_folder(path=Path(model_path))
+        scan_result = hl_client.model_scanner.scan_folder(
+            path=Path(model_path), model_name=model_name
+        )
     else:
         model_path: Path = Path(model_path)
-        all_scan_results = [
-            hl_client.model_scanner.scan_file(
-                model_name=model_path.name, model_path=model_path
-            )
-        ]
+        scan_result = hl_client.model_scanner.scan_file(
+            model_name=model_name, model_path=model_path
+        )
 
     detected = False  # Whether we detected a malicious file during the scans
 
-    for scan_result in all_scan_results:
-        if scan_result.detections:
-            detected = True
-            markdown_generator.add_table_row([str(scan_result.file_path), ":x:"])
-        else:
-            markdown_generator.add_table_row(
-                [str(scan_result.file_path), ":white_check_mark:"]
-            )
+    if scan_result.detection_count > 0:
+        detected = True
+        markdown_generator.add_table_row([str(scan_result.file_path), ":x:"])
+    else:
+        markdown_generator.add_table_row(
+            [str(scan_result.file_path), ":white_check_mark:"]
+        )
 
     if os.environ.get("GITHUB_OUTPUT"):
         name = "detection_results"
@@ -124,15 +122,15 @@ def main(
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
             print(markdown_generator.markdown_string.replace("\\n", "\n"), file=f)
 
-    json_output = [res.to_dict() for res in all_scan_results]
-    print(json.dumps(json_output, indent=4))
+    json_output = scan_result.to_dict()
+    print(json.dumps(json_output, indent=4, default=str))
 
     if output_file:
         with open(output_file, "w") as f:
-            json.dump(json_output, f, indent=4)
+            json.dump(json_output, f, indent=4, default=str)
 
     if sarif_file:
-        sarif_output = sarif.SarifV2Output.from_scan_results(all_scan_results, run_id)
+        sarif_output = hl_client.model_scanner.get_sarif_results(model_name=model_name)
         with open(sarif_file, "w") as f:
             json.dump(sarif_output.model_dump(by_alias=True), f, indent=4)
 
@@ -148,6 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("output_file", type=str)
     parser.add_argument("sarif_file", type=str)
     parser.add_argument("run_id", type=str)
+    parser.add_argument("model_name", type=str, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
@@ -166,4 +165,5 @@ if __name__ == "__main__":
         args[0].output_file,
         args[0].sarif_file,
         args[0].run_id,
+        args[0].model_name,
     )
