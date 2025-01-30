@@ -159,9 +159,6 @@ def test_sarif_output_no_detections(host):
     with open(output_path, "r") as f:
         output = json.load(f)
 
-    # Dynamic field that must exist but doesn't need to be validated
-    del output["runs"][0]["automationDetails"]
-
     os.remove(output_path)
 
     assert len(output["runs"][0]["results"]) == 0
@@ -189,17 +186,17 @@ def test_sarif_output_detections(host):
     assert len(output["runs"][0]["results"]) > 0
     assert output["runs"][0]["results"][0]["ruleId"] == "PICKLE_0057_202408"
     assert (
-        output["runs"][0]["results"][0]["properties"]["additional_properties"]["sha256"]
+        output["runs"][0]["results"][0]["properties"]["sha256"]
         == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce"
     )
     assert (
-        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+        output["runs"][0]["results"][0]["properties"][
             "modelType"
         ]
         == "pytorch"
     )
     assert (
-        output["runs"][0]["results"][0]["properties"]["additional_properties"][
+        output["runs"][0]["results"][0]["properties"][
             "problem.severity"
         ]
         == "high"
