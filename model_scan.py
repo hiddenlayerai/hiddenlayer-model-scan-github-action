@@ -132,7 +132,7 @@ def main(
     if sarif_file:
         sarif_output = hl_client.model_scanner.get_sarif_results(model_name=model_name)
         with open(sarif_file, "w") as f:
-            json.dump(sarif_output.model_dump(by_alias=True, exclude_unset=True), f, indent=4)
+            json.dump(sarif_output.model_dump(by_alias=True, exclude_unset=True, exclude_none=True), f, indent=4)
 
     if detected and fail_on_detection:
         print("Malicious models found!")
