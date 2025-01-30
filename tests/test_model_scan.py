@@ -189,15 +189,5 @@ def test_sarif_output_detections(host):
         output["runs"][0]["results"][0]["properties"]["sha256"]
         == "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce"
     )
-    assert (
-        output["runs"][0]["results"][0]["properties"][
-            "modelType"
-        ]
-        == "pytorch"
-    )
-    assert (
-        output["runs"][0]["results"][0]["properties"][
-            "problem.severity"
-        ]
-        == "high"
-    )
+    assert output["runs"][0]["results"][0]["properties"]["modelType"] == "pytorch"
+    assert output["runs"][0]["results"][0]["properties"]["problem.severity"] == "high"
