@@ -1,2 +1,2 @@
-hiddenlayer-sdk[aws,azure,hf] @ git+https://github.com/hiddenlayerai/hiddenlayer-sdk-python@fix-sdk-sarif
+hiddenlayer-sdk[aws,azure,hf]==1.2.2
 pydantic>=2.0.0

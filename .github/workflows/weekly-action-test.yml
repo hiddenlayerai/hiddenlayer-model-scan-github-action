@@ -5,6 +5,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 0 15 * * 1
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
