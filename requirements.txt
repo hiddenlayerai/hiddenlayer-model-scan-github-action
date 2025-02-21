@@ -1,2 +1,2 @@
-hiddenlayer-sdk[aws,azure,hf]==1.2.2
+hiddenlayer-sdk[aws,azure,hf]==2.0.1
 pydantic>=2.0.0
