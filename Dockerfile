@@ -1,4 +1,4 @@
-FROM python:3.13-slim@sha256:ae9f9ac89467077ed1efefb6d9042132d28134ba201b2820227d46c9effd3174
+FROM python:3.13-slim@sha256:0911c0f1ca0214c41de3974ef4bda59fe2eb5c54da27bf0ab008bf87a8b682be
 
 RUN apt-get -y update \
 	&& apt-get install -y git \
