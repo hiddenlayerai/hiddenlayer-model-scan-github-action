@@ -131,7 +131,7 @@ def main(
 
     if sarif_file:
         sarif_output = hl_client.model_scanner.get_sarif_results(
-            scan_id=scan_result.scan_id, run_id=run_id
+            scan_id=scan_result.scan_id
         )
         with open(sarif_file, "w") as f:
             f.write(sarif_output)
