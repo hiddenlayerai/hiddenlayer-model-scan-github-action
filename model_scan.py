@@ -130,7 +130,9 @@ def main(
             json.dump(json_output, f, indent=4, default=str)
 
     if sarif_file:
-        sarif_output = hl_client.model_scanner.get_sarif_results(scan_id=scan_result.scan_id, run_id=run_id)
+        sarif_output = hl_client.model_scanner.get_sarif_results(
+            scan_id=scan_result.scan_id, run_id=run_id
+        )
         with open(sarif_file, "w") as f:
             f.write(sarif_output)
 
