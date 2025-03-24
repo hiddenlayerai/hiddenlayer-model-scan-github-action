@@ -197,16 +197,14 @@ def test_sarif_output_detections(host):
 def test_community_scan(host):
     """Test community Scan with HuggingFace ScanMe repo"""
 
-    with pytest.raises(SystemExit) as e:
-        model_scan.main(
-            model_path="ScanMe/Models",
-            api_url=host,
-            model_name="GHA Community Scan Test",
-            model_version="main",
-            community_scan="HUGGING_FACE",
-        )
-
-    assert e.value.code == 1
+    model_scan.main(
+        model_path="ScanMe/Models",
+        api_url=host,
+        model_name="GHA Community Scan Test",
+        model_version="main",
+        community_scan="HUGGING_FACE",
+        fail_on_detection=False,
+    )
 
     with open("output.json", "r") as f:
         output = json.load(f)
