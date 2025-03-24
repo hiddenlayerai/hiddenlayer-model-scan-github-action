@@ -159,7 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("sarif_file", type=str)
     parser.add_argument("run_id", type=str)
     parser.add_argument("model_name", type=str)
-    parser.add_argument("--model-version", type=str, required=False)
+    parser.add_argument("--model_version", type=str, required=False, default=None)
     parser.add_argument("--community_scan", type=CommunityScanSource, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
