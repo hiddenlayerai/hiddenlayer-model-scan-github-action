@@ -20,6 +20,8 @@ def main(
     sarif_file: Optional[str] = None,
     run_id: Optional[str] = None,
     model_name: Optional[str] = None,
+    community_scan: Optional[CommunityScanSource] = None,
+    model_version: Optional[str] = None,
 ):
     """
     Scans a model using the HiddenLayer API.
@@ -63,7 +65,15 @@ def main(
     markdown_generator.h2("Model Scanner Results")
     markdown_generator.create_table(["File Name", "Result"])
 
-    if model_path.startswith("s3://"):
+    if community_scan is not None:
+        # intentionally handle this case before the others, to bypass legacy "community scan" style scans
+        scan_result = hl_client.model_scanner.community_scan(
+            model_name=model_name,
+            model_path=model_path,
+            model_cource=community_scan,
+            model_version=model_version,
+        )
+    elif model_path.startswith("s3://"):
         bucket, key = model_path.split("/", 2)[-1].split("/", 1)
         scan_result = hl_client.model_scanner.scan_s3_model(
             model_name=model_name, bucket=bucket, key=key
@@ -82,7 +92,6 @@ def main(
             blob=blob,
             credential=os.getenv("AZURE_BLOB_SAS_KEY"),
         )
-
     elif model_path.startswith("hf://"):
         scan_result = hl_client.model_scanner.scan_huggingface_model(
             repo_id=model_path.removeprefix("hf://"),
@@ -149,6 +158,8 @@ if __name__ == "__main__":
     parser.add_argument("sarif_file", type=str)
     parser.add_argument("run_id", type=str)
     parser.add_argument("model_name", type=str)
+    parser.add_argument("model_version", type=str, required=False)
+    parser.add_argument("community_scan", type=CommunityScanSource, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
@@ -168,4 +179,6 @@ if __name__ == "__main__":
         args[0].sarif_file,
         args[0].run_id,
         args[0].model_name,
+        args[0].community_scan,
+        args[0].model_version,
     )
