@@ -37,6 +37,16 @@ For more information about GitHub Actions:
 
 `run_id`: Run id for the current run of the model scanner. Defaults to `YYYYMMDDTHHMMSS`
 
+`model_version`: version of model to scan for community scan, e.g. main branch etc. Defaults to main for community scan
+
+`community_scan`: Optional parameter to enable the community scan capabilities in model scanner. If not specified model is uploaded to model scanner (Saas or on-prem). Possible values below
+
+| Community Scan Value | Description | Model Version |
+| -------------------- | ----------- | ------------- |
+| AWS_PRESIGNED        | Presigned S3 URL | N/A |
+| AZURE_BLOB_SAS       | Shared Access Signature (SAS) Azure Blobstore URL | N/A |
+| HUGGING_FACE         | Hugging Face repo | repo branch e.g. main |
+
 > Note: For customers using the Enterprise Self Hosted Model Scanner, please ensure your Github Action runners can make network requests to the Model Scanner API.
 
 ## Environment Variables
@@ -170,6 +180,27 @@ jobs:
         uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v1.0.0
         with:
           model_path: hf://flair/ner-english-ontonotes
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
+```
+
+### Scanning a HuggingFace Model using Community Scan (Requires 1.0.2 or later)
+
+```yaml
+jobs:
+  scan_huggingface_model_community_scan:
+    runs-on: ubuntu-latest
+    name: Scan a HuggingFace Model via Community Scan
+    steps:
+      - uses: actions/checkout@v3
+      - name: Scan model on HuggingFace
+        id: scan_model_huggingface
+        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v1.0.2
+        with:
+          model_path: flair/ner-english-ontonotes
+          model_version: main
+          community_scan: HUGGING_FACE
         env:
           HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
           HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}

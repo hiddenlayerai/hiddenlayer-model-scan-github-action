@@ -30,7 +30,20 @@ inputs:
   model_name:
     description: Model name
     required: false
-    default: null
+    default: null 
+  model_version:
+    description: Model version
+    required: false
+  community_scan:
+    description: Scan community model directly
+    required: false
+    default: ''
+    type: choice
+    options:
+      - 'AWS_PRESIGNED'
+      - 'AZURE_BLOB_SAS'
+      - 'HUGGING_FACE'
+
 outputs:
   detection_results:
     description: 'Markdown table of detection results.'
@@ -44,4 +57,6 @@ runs:
     - ${{ inputs.sarif_file }}
     - ${{ inputs.run_id }}
     - ${{ inputs.model_name }}
+    - ${{ inputs.model_version != '' && format('--model_version={0}', inputs.model_version) || null }}
+    - ${{ inputs.community_scan != '' && format('--community_scan={0}', inputs.community_scan) || null }}
     - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}
