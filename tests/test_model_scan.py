@@ -192,10 +192,11 @@ def test_sarif_output_detections(host):
     assert output["runs"][0]["results"][0]["properties"]["modelType"] == "pytorch"
     assert output["runs"][0]["results"][0]["properties"]["problem.severity"] == "high"
 
+
 @pytest.mark.parametrize("host", params)
 def test_community_scan(host):
     """Test community Scan with HuggingFace ScanMe repo"""
-    
+
     model_scan.main(
         model_path="ScanMe/Models",
         api_url=host,
@@ -210,10 +211,12 @@ def test_community_scan(host):
     assert len(output) > 0
 
     valid_result = False
-    if output["summary"]["detection_count"] == 6 and output['summary']["file_count"] == 12:
+    if (
+        output["summary"]["detection_count"] == 6
+        and output["summary"]["file_count"] == 12
+    ):
         valid_result = True
 
     os.remove("output.json")
 
     assert valid_result
-
