@@ -67,6 +67,13 @@ def main(
     markdown_generator.create_table(["File Name", "Result"])
 
     if community_scan is not None:
+        if model_version is None:
+            if community_scan == CommunityScanSource.HUGGING_FACE:
+                model_version = "main"
+            else:
+                raise ValueError(
+                    "When running a community scan other than a Hugging Face model, you must provide a model version."
+                )
         # intentionally handle this case before the others, to bypass legacy "community scan" style scans
         scan_result = hl_client.model_scanner.community_scan(
             model_name=model_name,
