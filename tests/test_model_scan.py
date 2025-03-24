@@ -204,6 +204,7 @@ def test_community_scan(host):
         model_version="main",
         community_scan="HUGGING_FACE",
         fail_on_detection=False,
+        output_file="output.json",
     )
 
     with open("output.json", "r") as f:

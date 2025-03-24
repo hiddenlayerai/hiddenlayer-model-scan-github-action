@@ -62,6 +62,6 @@ runs:
     - ${{ inputs.sarif_file }}
     - ${{ inputs.run_id }}
     - ${{ inputs.model_name }}
-    - ${{ inputs.model_version != ''null'' && inputs.model_version || null }}
+    - ${{ inputs.model_version != '' && inputs.model_version || null }}
     - ${{ inputs.community_scan != '' && inputs.community_scan || null }}
     - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}
