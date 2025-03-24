@@ -41,3 +41,15 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: output.sarif
+      - name: Community Scan Hugging HuggingFace
+        id: community_scan_huggingface
+        uses: ./ # Testing the action from this repository
+        with:
+          model_path: hf://drhyrum/bert-tiny-torch-vuln
+          fail_on_detection: false
+          output_file: output.json
+          sarif_file: output.sarif
+          community_scan: 'HUGGING_FACE'
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
