@@ -7,6 +7,7 @@ from typing import Optional
 import json
 
 from hiddenlayer import HiddenlayerServiceClient
+from hiddenlayer.sdk.constants import CommunityScanSource
 from urllib.parse import urlparse
 
 import markdown
@@ -70,7 +71,7 @@ def main(
         scan_result = hl_client.model_scanner.community_scan(
             model_name=model_name,
             model_path=model_path,
-            model_cource=community_scan,
+            model_source=community_scan,
             model_version=model_version,
         )
     elif model_path.startswith("s3://"):
