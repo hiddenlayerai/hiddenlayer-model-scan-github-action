@@ -214,8 +214,8 @@ def test_community_scan(host):
 
     valid_result = False
     if (
-        output["summary"]["detection_count"] == 6
-        and output["summary"]["file_count"] == 12
+        output["detection_count"] == 6
+        and output["file_count"] == 12
     ):
         valid_result = True
 
