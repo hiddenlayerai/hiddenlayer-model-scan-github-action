@@ -40,13 +40,8 @@ inputs:
     default: ''
     type: choice
     options:
-      - 'LOCAL'
       - 'AWS_PRESIGNED'
-      - 'AWS_IAM_ROLE'
       - 'AZURE_BLOB_SAS'
-      - 'AZURE_BLOB_AD'
-      - 'GOOGLE_SIGNED'
-      - 'GOOGLE_OAUTH'
       - 'HUGGING_FACE'
 
 outputs:
