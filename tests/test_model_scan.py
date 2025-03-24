@@ -201,7 +201,6 @@ def test_community_scan(host):
         model_path="ScanMe/Models",
         api_url=host,
         model_name="GHA Community Scan Test",
-        model_version="main",
         community_scan="HUGGING_FACE",
         fail_on_detection=False,
         output_file="output.json",
