@@ -12,6 +12,22 @@ from urllib.parse import urlparse
 
 import markdown
 
+def make_github_compatible_sarif(sarif: str) -> str:
+    # deserialize the json
+    sarif_json = json.loads(sarif)
+    # iterate all runs
+    for run in sarif_json["runs"]:
+        # iterate all results
+        for result in run["results"]:
+            # iterate all locations
+            for location in result["locations"]:
+                uriStr = location.get("physicalLocation", {}).get("artifactLocation", {}).get("uri")
+                if uriStr:
+                    # replace the uri protocol with file://
+                    uri = urlparse(uriStr)
+                    uri._replace(scheme="file")
+                    location["physicalLocation"]["artifactLocation"]["uri"] = uri.geturl()
+    return json.dumps(sarif_json)
 
 def main(
     model_path: str,
@@ -150,6 +166,7 @@ def main(
         sarif_output = hl_client.model_scanner.get_sarif_results(
             scan_id=scan_result.scan_id
         )
+        sarif_output = make_github_compatible_sarif(sarif_output)
         with open(sarif_file, "w") as f:
             f.write(sarif_output)
 
