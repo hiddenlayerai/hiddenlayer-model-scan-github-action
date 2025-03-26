@@ -25,7 +25,7 @@ def make_github_compatible_sarif(sarif: str) -> str:
                 if uriStr:
                     # replace the uri protocol with file://
                     uri = urlparse(uriStr)
-                    uri._replace(scheme="file")
+                    uri = uri._replace(scheme="file")
                     sarif_json["runs"][i]["results"][j]["locations"][k]["physicalLocation"]["artifactLocation"]["uri"] = uri.geturl()
     return json.dumps(sarif_json)
 
