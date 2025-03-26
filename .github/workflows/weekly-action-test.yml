@@ -40,7 +40,7 @@ jobs:
         id: community_scan_huggingface
         uses: ./ # Testing the action from this repository
         with:
-          model_path: ScanMe/Models
+          model_path: deepseek-ai/DeepSeek-V3
           fail_on_detection: false
           output_file: output.json
           sarif_file: output.sarif
