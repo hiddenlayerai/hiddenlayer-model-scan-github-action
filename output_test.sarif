@@ -1,0 +1,55 @@
+{
+    "version": "2.1.0",
+    "runs":
+    [
+        {
+            "tool":
+            {
+                "driver":
+                {
+                    "name": "HiddenLayer Model Scanner",
+                    "version": "25.2.0",
+                    "informationUri": "https://hiddenlayer.com"
+                }
+            },
+            "results":
+            [
+                {
+                    "ruleId": "PICKLE_0057_202408",
+                    "level": "error",
+                    "message":
+                    {
+                        "text": "This detection rule was triggered by the presence of a function or library that can be used to exfiltrate data. Offending module / function:webbrowser."
+                    },
+                    "locations":
+                    [
+                        {
+                            "physicalLocation":
+                            {
+                                "artifactLocation":
+                                {
+                                    "uri": "file://huggingface.co/drhyrum/bert-tiny-torch-vuln/resolve/753c3cb70db0705e814b400330028ad5335246d3/pytorch_model.bin"
+                                }
+                            }
+                        }
+                    ],
+                    "properties":
+                    {
+                        "sha256": "00c0dcab98b14b5b8effa5724cc2b02d01624539460420c0ca13cbd9878da2ce",
+                        "modelType": "pytorch",
+                        "modelSubType":
+                        [],
+                        "problem.severity": "high"
+                    },
+                    "partialFingerprints":
+                    {
+                        "ruleId": "PICKLE_0057_202408",
+                        "scanId": "039af9ae-56b4-40e6-a0e0-8accd0bcd19e",
+                        "fileId": "a5cb5ce9-f4d1-427d-8cbb-1718d6060130"
+                    }
+                }
+            ]
+        }
+    ],
+    "$schema": "https://json.schemastore.org/sarif-2.1.0.json"
+}
