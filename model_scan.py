@@ -6,11 +6,24 @@ from pathlib import Path
 from typing import Optional
 import json
 
-from hiddenlayer import HiddenlayerServiceClient
-from hiddenlayer.sdk.constants import CommunityScanSource
+from hiddenlayer import HiddenLayer
+from hiddenlayer.lib import CommunityScanSource
 from urllib.parse import urlparse
 
 import markdown
+
+
+def community_scan_type(value: str) -> Optional[CommunityScanSource]:
+    """Convert string to CommunityScanSource constant."""
+    if not value:
+        return None
+    value_upper = value.upper()
+    if hasattr(CommunityScanSource, value_upper):
+        return getattr(CommunityScanSource, value_upper)
+    raise argparse.ArgumentTypeError(
+        f"Invalid CommunityScanSource value: '{value}'. "
+        f"Valid values are: {', '.join([attr for attr in dir(CommunityScanSource) if attr.isupper() and not attr.startswith('_')])}"
+    )
 
 
 def make_github_compatible_sarif(sarif: str) -> str:
@@ -82,8 +95,8 @@ def main(
             )
 
     # Client inits
-    hl_client = HiddenlayerServiceClient(
-        host=api_url, api_id=hl_api_id, api_key=hl_api_key
+    hl_client = HiddenLayer(
+        base_url=api_url, client_id=hl_api_id, client_secret=hl_api_key
     )
 
     markdown_generator = markdown.MarkdownStringGenerator()
@@ -99,16 +112,18 @@ def main(
                     "When running a community scan other than a Hugging Face model, you must provide a model version."
                 )
         # intentionally handle this case before the others, to bypass legacy "community scan" style scans
-        scan_result = hl_client.model_scanner.community_scan(
+        scan_result = hl_client.community_scanner.community_scan(
             model_name=model_name,
             model_path=model_path,
             model_source=community_scan,
             model_version=model_version,
+            origin="github-action",
+            request_source="Integration",
         )
     elif model_path.startswith("s3://"):
         bucket, key = model_path.split("/", 2)[-1].split("/", 1)
         scan_result = hl_client.model_scanner.scan_s3_model(
-            model_name=model_name, bucket=bucket, key=key
+            model_name=model_name, bucket=bucket, key=key, request_source="Integration"
         )
 
     elif model_path.startswith("https://") and "blob.core.windows.net" in model_path:
@@ -123,32 +138,43 @@ def main(
             container=container,
             blob=blob,
             credential=os.getenv("AZURE_BLOB_SAS_KEY"),
+            request_source="Integration",
         )
     elif model_path.startswith("hf://"):
         scan_result = hl_client.model_scanner.scan_huggingface_model(
             repo_id=model_path.removeprefix("hf://"),
             hf_token=os.getenv("HUGGINGFACE_TOKEN"),
             model_name=model_name,
+            request_source="Integration",
         )
     elif Path(model_path).is_dir():
         scan_result = hl_client.model_scanner.scan_folder(
-            path=Path(model_path), model_name=model_name
+            path=Path(model_path),
+            model_name=model_name,
+            request_source="Integration",
+            origin="github-action",
         )
     else:
         model_path: Path = Path(model_path)
         scan_result = hl_client.model_scanner.scan_file(
-            model_name=model_name, model_path=model_path
+            model_name=model_name,
+            model_path=model_path,
+            request_source="Integration",
+            origin="github-action",
         )
 
     detected = False  # Whether we detected a malicious file during the scans
 
+    for file_result in scan_result.file_results:
+        if file_result.detections is None or len(file_result.detections) == 0:
+            markdown_generator.add_table_row(
+                [str(file_result.file_location), ":white_check_mark:"]
+            )
+        else:
+            markdown_generator.add_table_row([str(file_result.file_location), ":x:"])
+
     if scan_result.detection_count > 0:
         detected = True
-        markdown_generator.add_table_row([str(scan_result.file_path), ":x:"])
-    else:
-        markdown_generator.add_table_row(
-            [str(scan_result.file_path), ":white_check_mark:"]
-        )
 
     if os.environ.get("GITHUB_OUTPUT"):
         name = "detection_results"
@@ -171,9 +197,7 @@ def main(
             json.dump(json_output, f, indent=4, default=str)
 
     if sarif_file:
-        sarif_output = hl_client.model_scanner.get_sarif_results(
-            scan_id=scan_result.scan_id
-        )
+        sarif_output = hl_client.scans.results.sarif(scan_id=scan_result.scan_id)
         sarif_output = make_github_compatible_sarif(sarif_output)
         with open(sarif_file, "w") as f:
             f.write(sarif_output)
@@ -192,7 +216,7 @@ if __name__ == "__main__":
     parser.add_argument("run_id", type=str)
     parser.add_argument("model_name", type=str)
     parser.add_argument("--model_version", type=str, required=False, default=None)
-    parser.add_argument("--community_scan", type=CommunityScanSource, required=False)
+    parser.add_argument("--community_scan", type=community_scan_type, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
