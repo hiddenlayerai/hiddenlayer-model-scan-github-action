@@ -13,6 +13,19 @@ from urllib.parse import urlparse
 import markdown
 
 
+def community_scan_type(value: str) -> Optional[CommunityScanSource]:
+    """Convert string to CommunityScanSource constant."""
+    if not value:
+        return None
+    value_upper = value.upper()
+    if hasattr(CommunityScanSource, value_upper):
+        return getattr(CommunityScanSource, value_upper)
+    raise argparse.ArgumentTypeError(
+        f"Invalid CommunityScanSource value: '{value}'. "
+        f"Valid values are: {', '.join([attr for attr in dir(CommunityScanSource) if attr.isupper() and not attr.startswith('_')])}"
+    )
+
+
 def make_github_compatible_sarif(sarif: str) -> str:
     # deserialize the json
     sarif_json = json.loads(sarif)
@@ -136,19 +149,27 @@ def main(
         )
     elif Path(model_path).is_dir():
         scan_result = hl_client.model_scanner.scan_folder(
-            path=Path(model_path), model_name=model_name, request_source="Integration", origin="github-action"
+            path=Path(model_path),
+            model_name=model_name,
+            request_source="Integration",
+            origin="github-action",
         )
     else:
         model_path: Path = Path(model_path)
         scan_result = hl_client.model_scanner.scan_file(
-            model_name=model_name, model_path=model_path, request_source="Integration", origin="github-action"
+            model_name=model_name,
+            model_path=model_path,
+            request_source="Integration",
+            origin="github-action",
         )
 
     detected = False  # Whether we detected a malicious file during the scans
 
     for file_result in scan_result.file_results:
         if file_result.detections is None or len(file_result.detections) == 0:
-            markdown_generator.add_table_row([str(file_result.file_location), ":white_check_mark:"])
+            markdown_generator.add_table_row(
+                [str(file_result.file_location), ":white_check_mark:"]
+            )
         else:
             markdown_generator.add_table_row([str(file_result.file_location), ":x:"])
 
@@ -176,9 +197,7 @@ def main(
             json.dump(json_output, f, indent=4, default=str)
 
     if sarif_file:
-        sarif_output = hl_client.scans.results.sarif(
-            scan_id=scan_result.scan_id
-        )
+        sarif_output = hl_client.scans.results.sarif(scan_id=scan_result.scan_id)
         sarif_output = make_github_compatible_sarif(sarif_output)
         with open(sarif_file, "w") as f:
             f.write(sarif_output)
@@ -197,7 +216,7 @@ if __name__ == "__main__":
     parser.add_argument("run_id", type=str)
     parser.add_argument("model_name", type=str)
     parser.add_argument("--model_version", type=str, required=False, default=None)
-    parser.add_argument("--community_scan", type=CommunityScanSource, required=False)
+    parser.add_argument("--community_scan", type=community_scan_type, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
 
     # Since this is running from a Github action, if there are 5 total args to the program
