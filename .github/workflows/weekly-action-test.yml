@@ -58,3 +58,13 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: output.sarif
+      - name: Empty Model Scan Test
+        uses: ./ # Testing the action from this repository
+        with:
+          model_path: './tests/models/empty_model.xgb'
+          fail_on_detection: false
+          output_file: output.json
+          sarif_file: output.sarif
+        env:
+          HL_CLIENT_ID: ${{ secrets.HL_CLIENT_ID }}
+          HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
