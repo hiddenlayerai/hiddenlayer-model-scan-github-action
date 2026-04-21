@@ -88,22 +88,6 @@ jobs:
           HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
 ```
 
-### Scanning a model using the Enterprise Self Hosted Model Scanner
-
-```yaml
-jobs:
-  scan_model:
-    runs-on: ubuntu-latest
-    name: Scan a model
-    steps:
-      - uses: actions/checkout@v3
-      - name: Scan model
-        id: scan_model
-        uses: hiddenlayerai/hiddenlayer-model-scan-github-action@v1.0.5
-        with:
-          model_path: ./models/pytorch_model.bin
-          api_url: "https://your.enterprise.url"
-```
 
 ### Scanning a model folder
 
