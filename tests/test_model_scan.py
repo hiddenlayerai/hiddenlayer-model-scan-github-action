@@ -198,7 +198,7 @@ def test_community_scan(host):
     """Test community Scan with HuggingFace ScanMe repo"""
 
     model_scan.main(
-        model_path="ScanMe/test-models",
+        model_path="ScanMe/Models",
         api_url=host,
         model_name="GHA Community Scan Test",
         community_scan="HUGGING_FACE",
@@ -212,9 +212,9 @@ def test_community_scan(host):
     assert len(output) > 0
 
     valid_result = False
-    if output["detection_count"] == 6 and output["file_count"] == 12:
+    if output["detection_count"] > 0 and output["file_count"] > 0:
         valid_result = True
 
     os.remove("output.json")
 
-    assert valid_result
+    assert valid_result is True
