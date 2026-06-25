@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 import json
 
+import httpx
 from hiddenlayer import HiddenLayer
 from hiddenlayer.lib import CommunityScanSource
 from urllib.parse import urlparse
@@ -60,6 +61,7 @@ def main(
     model_name: Optional[str] = None,
     community_scan: Optional[CommunityScanSource] = None,
     model_version: Optional[str] = None,
+    timeout: float = 300.0,
 ):
     """
     Scans a model using the HiddenLayer API.
@@ -96,7 +98,10 @@ def main(
 
     # Client inits
     hl_client = HiddenLayer(
-        base_url=api_url, client_id=hl_api_id, client_secret=hl_api_key
+        base_url=api_url,
+        client_id=hl_api_id,
+        client_secret=hl_api_key,
+        timeout=httpx.Timeout(timeout),
     )
 
     markdown_generator = markdown.MarkdownStringGenerator()
@@ -218,6 +223,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_version", type=str, required=False, default=None)
     parser.add_argument("--community_scan", type=community_scan_type, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
+    parser.add_argument("--timeout", type=float, required=False, default=300.0)
 
     # Since this is running from a Github action, if there are 5 total args to the program
     # there will always be 5 inputs to the program.
@@ -238,4 +244,5 @@ if __name__ == "__main__":
         args[0].model_name,
         args[0].community_scan,
         args[0].model_version,
+        args[0].timeout,
     )

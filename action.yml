@@ -43,6 +43,10 @@ inputs:
       - 'AWS_PRESIGNED'
       - 'AZURE_BLOB_SAS'
       - 'HUGGING_FACE'
+  timeout:
+    description: 'HTTP request timeout in seconds. Increase this when uploading large models that hit write timeout errors. Defaults to 300 seconds (5 minutes).'
+    required: false
+    default: '300'
 
 outputs:
   detection_results:
@@ -60,3 +64,4 @@ runs:
     - ${{ inputs.model_version != '' && format('--model_version={0}', inputs.model_version) || null }}
     - ${{ inputs.community_scan != '' && format('--community_scan={0}', inputs.community_scan) || null }}
     - ${{ inputs.fail_on_detection == 'true' && '--fail-on-detection' || null }}
+    - ${{ format('--timeout={0}', inputs.timeout) }}
