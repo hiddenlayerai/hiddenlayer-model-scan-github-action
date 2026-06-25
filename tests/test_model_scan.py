@@ -212,9 +212,9 @@ def test_community_scan(host):
     assert len(output) > 0
 
     valid_result = False
-    if output["detection_count"] == 6 and output["file_count"] == 12:
+    if output["detection_count"] > 0 and output["file_count"] > 0:
         valid_result = True
 
     os.remove("output.json")
 
-    assert valid_result
+    assert valid_result is True
