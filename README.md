@@ -61,7 +61,7 @@ For more information about GitHub Actions:
 
 `AZURE_BLOB_SAS_KEY`: Required when scanning a model file in a Azure Blob private container.
 
-`HUGGINGFACE_TOKEN`: Required if you want to scan private or licensed models.  
+`HUGGINGFACE_TOKEN`: Required if you want to scan private or licensed models.  *Note: this envvar is only used with the [Hugging Face usage](#scanning-a-huggingface-model) not the [Community Scan](#scanning-a-huggingface-model-using-community-scan) usage.*
 
 ## Output
 
@@ -169,7 +169,7 @@ jobs:
           HL_CLIENT_SECRET: ${{ secrets.HL_CLIENT_SECRET }}
 ```
 
-### Scanning a HuggingFace Model using Community Scan (Requires 1.0.2 or later)
+### Scanning a HuggingFace Model using Community Scan
 
 ```yaml
 jobs:
