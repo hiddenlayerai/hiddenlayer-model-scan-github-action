@@ -198,7 +198,7 @@ def test_community_scan(host):
     """Test community Scan with HuggingFace ScanMe repo"""
 
     model_scan.main(
-        model_path="ScanMe/test-models",
+        model_path="ScanMe/Models",
         api_url=host,
         model_name="GHA Community Scan Test",
         community_scan="HUGGING_FACE",
