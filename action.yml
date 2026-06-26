@@ -46,7 +46,7 @@ inputs:
   timeout:
     description: 'HTTP request timeout in seconds. Increase this when uploading large models that hit write timeout errors. Defaults to 300 seconds (5 minutes).'
     required: false
-    default: '300'
+    default: '30'
 
 outputs:
   detection_results:
