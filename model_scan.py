@@ -61,7 +61,7 @@ def main(
     model_name: Optional[str] = None,
     community_scan: Optional[CommunityScanSource] = None,
     model_version: Optional[str] = None,
-    timeout: float = 300.0,
+    timeout: float = 30.0,
 ):
     """
     Scans a model using the HiddenLayer API.
