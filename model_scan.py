@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import sys
 import uuid
@@ -13,6 +14,11 @@ from urllib.parse import urlparse
 
 import markdown
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    stream=sys.stdout,
+)
 
 def community_scan_type(value: str) -> Optional[CommunityScanSource]:
     """Convert string to CommunityScanSource constant."""
