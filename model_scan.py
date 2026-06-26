@@ -223,7 +223,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_version", type=str, required=False, default=None)
     parser.add_argument("--community_scan", type=community_scan_type, required=False)
     parser.add_argument("--fail-on-detection", action="store_true", required=False)
-    parser.add_argument("--timeout", type=float, required=False, default=300.0)
+    parser.add_argument("--timeout", type=float, required=False, default=30.0)
 
     # Since this is running from a Github action, if there are 5 total args to the program
     # there will always be 5 inputs to the program.
