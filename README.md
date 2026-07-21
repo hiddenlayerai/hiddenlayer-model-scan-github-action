@@ -61,7 +61,7 @@ For more information about GitHub Actions:
 
 `AZURE_BLOB_SAS_KEY`: Required when scanning a model file in a Azure Blob private container.
 
-`HUGGINGFACE_TOKEN`: Required if you want to scan private or licensed models.  *Note: this envvar is only used with the [Hugging Face usage](#scanning-a-huggingface-model) not the [Community Scan](#scanning-a-huggingface-model-using-community-scan) usage.*
+`HUGGINGFACE_TOKEN`: Required if you want to scan private or licensed models.  *Note: this envvar is only used with the [Hugging Face usage](#scanning-a-huggingface-model) not the [Community Scan](#scanning-a-huggingface-model-using-community-scan) usage. Alternatively: Instead of using this envvar, use the Hugging Face Gated Repositories integration as seen [here](https://docs.hiddenlayer.ai/docs/integrations/huggingface_gated_repos) for the same result.*
 
 ## Output
 
